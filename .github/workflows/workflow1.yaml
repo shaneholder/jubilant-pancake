@@ -15,6 +15,7 @@ jobs:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
+      WORKING_DIR: terraform/proj1
     defaults:
       run:
         working-directory: terraform/proj1
@@ -70,8 +71,7 @@ jobs:
       uses: azure/cli@v1
       with:
         inlineScript: |
-          env
-          cd ${{ github.workspace }}
+          cd ${{ env.WORKING_DIR }}
           az storage blob upload --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name ${{ env.container_name }} --name ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
