@@ -14,6 +14,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_USE_OIDC: true
+      ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
     defaults:
       run:
         working-directory: terraform/proj1
@@ -45,7 +46,8 @@ jobs:
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
-      # TODO: What 
+      # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
+      # Can a different container be used
       id: init
       run: terraform init -backend-config=backend.conf
     
