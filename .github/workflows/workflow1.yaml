@@ -70,6 +70,7 @@ jobs:
       uses: azure/cli@v1
       with:
         inlineScript: |
+          dir
           az storage blob upload --auth-mode login -f tfplan.out --account-name ${{ env.storage_account_name }} --container-name ${{ env.container_name }} --name ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
