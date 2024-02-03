@@ -70,7 +70,7 @@ jobs:
       uses: azure/cli@v1
       with:
         inlineScript: |
-          az storage blob upload -f tfplan.out --account-name ${{ env.storage_account_name }} --destination-container ${{ env.container_name }} --destination-blob ${{ github.sha }}.out
+          az storage blob upload -f tfplan.out --account-name ${{ env.storage_account_name }} --container-name ${{ env.container_name }} --name ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
