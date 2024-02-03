@@ -8,6 +8,9 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     environment: development-ro
+    env:
+      ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     defaults:
       run:
         working-directory: terraform/proj1
