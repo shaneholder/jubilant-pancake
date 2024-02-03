@@ -69,9 +69,9 @@ jobs:
       # Store the plan so it can be used in the apply
       uses: azure/cli@v1
       with:
-        working-directory: terraform/proj1
         inlineScript: |
-          ls -l
+          env
+          cd ${{ github.workspace }}
           az storage blob upload --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name ${{ env.container_name }} --name ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
