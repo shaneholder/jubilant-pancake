@@ -5,7 +5,9 @@ terraform {
       version = "=3.86.0"
     }
   }
-  backend "azurerm" {}
+  backend "azurerm" {
+    use_oidc             = true
+  }
 }
 
 # Configure the Microsoft Azure Provider
