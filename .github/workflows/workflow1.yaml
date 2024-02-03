@@ -186,7 +186,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob download --auth-mode login --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}.out
+          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}.out
       
     - name: Terraform Apply
       id: apply
