@@ -5,14 +5,14 @@ Terraform needs multiple steps to apply successfully.  Plan should be executed b
 
 # Project Goals
 
-- [] Approval Flow, the output of a plan must be approved to apply
-- [] Sanitized output of plan must be available for PR review and not in the workflow run log
-- [] Plan output must be used for apply
-- [] Plan output must be saved securely NO ARTIFACTS
-- [] Should support multiple Terraform folders in a single repo
-- [] Credentials used for plan must be limited in order to not allow the possibility of a plan to modify resources
-- [] Multiple environments should be used to allow approval of apply to prod environment
-- [] Must allow for plan/apply to multiple environments dev/test/prod etc
-- [] Use Subscription Id, Client Id and Tenant Id in OIDC connectivity are provided by environments
+- [ ] Approval Flow, the output of a plan must be approved to apply
+- [X] Sanitized output of plan must be available for PR review and not in the workflow run log
+- [ ] Plan output must be used for apply
+- [X] Plan output must be saved securely not as an artifact
+- [ ] Should support multiple Terraform folders in a single repo
+- [ ] Credentials used for plan must be limited in order to not allow the possibility of a plan to modify resources
+- [ ] Multiple environments should be used to allow approval of apply to prod environment
+- [ ] Must allow for plan/apply to multiple environments dev/test/prod etc
+- [X] Use Subscription Id, Client Id and Tenant Id in OIDC connectivity are provided by environments
 
 
