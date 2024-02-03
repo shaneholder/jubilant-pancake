@@ -29,20 +29,21 @@ jobs:
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Load Backend Configuration
-      # Allows the usage of envrionemnt variables
-      run: cat backend.conf >> ${GITHUB_ENV}
-        
     - name: Confirm Login DEBUG
       uses: azure/CLI@v1
       with:
         azcliversion: latest
         inlineScript: |
           az account show        
+
     - uses: actions/checkout@v4
        
     - uses: hashicorp/setup-terraform@v3
-    
+
+    - name: Load Backend Configuration
+      # Allows the usage of envrionemnt variables
+      run: cat backend.conf >> ${GITHUB_ENV}
+
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
