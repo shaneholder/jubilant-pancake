@@ -29,6 +29,10 @@ jobs:
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+    - name: Load Backend Configuration
+      # Allows the usage of envrionemnt variables
+      run: cat backend.conf >> ${GITHUB_ENV}
+        
     - name: Confirm Login DEBUG
       uses: azure/CLI@v1
       with:
@@ -57,8 +61,15 @@ jobs:
     
     - name: Terraform Plan
       id: plan
-      run: terraform plan -no-color
+      run: terraform plan -no-color -out=tfplan.out
       continue-on-error: true
+
+    - name: Save Plan
+      # Store the plan so it can be used in the apply
+      uses: azure/cli@v1
+      with:
+        inlineScript: |
+          az storage blob upload -f tfplan.out --account-name ${{ env.storage_account_name }} --destination-container ${{ env.container_name }} --destination-blob ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
