@@ -72,7 +72,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob upload --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name ${{ env.container_name }} --name ${{ github.sha }}.out
+          az storage blob upload --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.sha }}.out
     
     - uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
