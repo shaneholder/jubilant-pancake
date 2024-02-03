@@ -1,5 +1,8 @@
 run-name: First Workflow
 on: pull_request
+permissions:
+  id-token: write # write permission is required for az login
+  
 jobs:
   
   plan:
