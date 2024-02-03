@@ -2,7 +2,7 @@ run-name: First Workflow
 on: pull_request
 permissions:
   id-token: write # write permission is required for az login
-  
+
 jobs:
   
   plan:
@@ -20,6 +20,12 @@ jobs:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}      
+    - name: Confirm Login DEBUG
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az account show        
     - uses: actions/checkout@v4
        
     - uses: hashicorp/setup-terraform@v3
