@@ -44,6 +44,8 @@ jobs:
       continue-on-error: true
     
     - name: Terraform Init
+      # To run init ensure that the client id has Storage Blob Data Owner
+      # TODO: What 
       id: init
       run: terraform init -backend-config=backend.conf
     
