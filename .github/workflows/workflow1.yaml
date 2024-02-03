@@ -1,8 +1,10 @@
 run-name: First Workflow
 on: pull_request
 jobs:
+  
   plan:
     runs-on: ubuntu-latest
+    environment: development-ro
     defaults:
       run:
         working-directory: terraform/proj1
