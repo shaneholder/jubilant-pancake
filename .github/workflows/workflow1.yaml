@@ -13,6 +13,7 @@ jobs:
         working-directory: terraform/proj1
     permissions:
       pull-requests: write
+      id-token: write # write permission is required for az login
     steps:
     - name: Azure login
       uses: azure/login@v1
