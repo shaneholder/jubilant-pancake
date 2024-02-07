@@ -9,7 +9,7 @@ It is possible that even upon a successful plan that an apply fails.  Given that
 
 - [ ] Approval Flow, the output of a plan must be approved to apply
 - [X] Sanitized output of plan must be available for PR review and not in the workflow run log
-- [ ] Plan output must be used for apply
+- [X] Plan output must be used for apply
 - [X] Plan output must be saved securely not as an artifact
 - [ ] Should support multiple Terraform folders in a single repo
 - [ ] Credentials used for plan must be limited in order to not allow the possibility of a plan to modify resources
