@@ -7,7 +7,7 @@ It is possible that even upon a successful plan that an apply fails.  Given that
 
 # Project Goals
 
-- [ ] Approval Flow, the output of a plan must be approved to apply
+- [X] Approval Flow, the output of a plan must be approved to apply
 - [X] Sanitized output of plan must be available for PR review and not in the workflow run log
 - [X] Plan output must be used for apply
 - [X] Plan output must be saved securely not as an artifact
@@ -16,5 +16,7 @@ It is possible that even upon a successful plan that an apply fails.  Given that
 - [ ] Multiple environments should be used to allow approval of apply to prod environment
 - [ ] Must allow for plan/apply to multiple environments dev/test/prod etc
 - [X] Use Subscription Id, Client Id and Tenant Id in OIDC connectivity are provided by environments
+- [ ] Prevent PR acceptance into main until Apply is complete
+      Requires usage of branch protection rules
 
 
