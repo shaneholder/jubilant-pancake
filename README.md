@@ -19,5 +19,7 @@ It is possible that even upon a successful plan that an apply fails.  Given that
 - [ ] Prevent PR acceptance into main until Apply is complete
       Requires usage of branch protection rules
 
+# Workflow
 
+# GitHub Settings
 
