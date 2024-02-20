@@ -17,9 +17,9 @@ A combination of Workflow and GitHub settings needs to be used to achieve the go
 ## GitHub Settings
 1. [X] Approval Flow, the output of a plan must be approved to apply
 
-1. [ ] Should support multiple Terraform folders in a single repo
+1. [ ] ~~Should support multiple Terraform folders in a single repo~~
 1. [ ] Credentials used for plan must be limited in order to not allow the possibility of a plan to modify resources
-1. [ ] Multiple environments should be used to allow approval of apply to prod environment
-1. [ ] Must allow for plan/apply to multiple environments dev/test/prod etc
+1. [X] Multiple environments should be used to allow approval of apply to prod environment
+1. [X] Must allow for plan/apply to multiple environments dev/test/prod etc
 1. [ ] Prevent PR acceptance into main until Apply is complete
       Requires usage of branch protection rules
