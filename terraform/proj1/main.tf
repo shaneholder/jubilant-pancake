@@ -3,6 +3,7 @@ resource "random_pet" "rg_name" {
 }
 
 resource "azurerm_resource_group" "rg" {
+  count    = 1
   location = var.resource_group_location
-  name     = format("%s_%s", random_pet.rg_name.id, var.environment)
+  name     = format("%s_%s_%s", random_pet.rg_name.id, count.index, var.environment)
 }
