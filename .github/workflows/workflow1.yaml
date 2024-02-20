@@ -87,7 +87,6 @@ jobs:
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
-      continue-on-error: true
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
@@ -170,6 +169,10 @@ jobs:
               body: output
             })
           }
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
 
   apply:
     strategy:
