@@ -37,9 +37,12 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
       
   plan:
+    strategy:
+      matrix:
+        environment: [development, production]
     needs: [context]
     runs-on: ubuntu-latest
-    environment: development-ro
+    environment: ${{matrix.environment}}-ro
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
@@ -48,6 +51,8 @@ jobs:
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: terraform/proj1
+      TF_VAR_environment: ${{matrix.environment}}
+ 
     defaults:
       run:
         working-directory: terraform/proj1
@@ -77,7 +82,7 @@ jobs:
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat backend.conf >> ${GITHUB_ENV}
+      run: cat ${{matrix.environment}}.conf >> ${GITHUB_ENV}
 
     - name: Terraform fmt
       id: fmt
@@ -89,7 +94,7 @@ jobs:
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=backend.conf
+      run: terraform init -backend-config=${{matrix.environment}}.conf
     
     - name: Terraform Validate
       id: validate
@@ -106,7 +111,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}.out
+          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
     
     - uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
@@ -122,11 +127,11 @@ jobs:
             issue_number: context.issue.number,
           })
           const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
           })
     
           // 2. Prepare format of the comment
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          const output = `#### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
           <details><summary>Validation Output</summary>
@@ -167,9 +172,12 @@ jobs:
           }
 
   apply:
+    strategy:
+      matrix:
+        environment: [development, production]    
     needs: [plan]
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{matrix.environment}}
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
@@ -205,14 +213,14 @@ jobs:
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat backend.conf >> ${GITHUB_ENV}
+      run: cat ${{matrix.environment}}.conf >> ${GITHUB_ENV}
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=backend.conf
+      run: terraform init -backend-config=${{matrix.environment}}.conf
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
@@ -220,7 +228,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}.out
+          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
       
     - name: Terraform Apply
       id: apply
