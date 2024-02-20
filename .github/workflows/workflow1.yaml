@@ -39,7 +39,7 @@ jobs:
   plan:
     strategy:
       matrix:
-        environment: [development]
+        environment: [development, production]
     needs: [context]
     runs-on: ubuntu-latest
     environment: ${{matrix.environment}}-ro
@@ -174,7 +174,7 @@ jobs:
   apply:
     strategy:
       matrix:
-        environment: [development]    
+        environment: [development, production]    
     needs: [plan]
     runs-on: ubuntu-latest
     environment: ${{matrix.environment}}
