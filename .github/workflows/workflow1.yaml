@@ -123,6 +123,7 @@ jobs:
           echo "<details><summary>Format Output</summary>" >> $GITHUB_STEP_SUMMARY
           echo ""
           echo '```' >> $GITHUB_STEP_SUMMARY
+          echo ""
           echo "${{ steps.fmt.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo ""
