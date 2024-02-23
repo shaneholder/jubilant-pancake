@@ -138,7 +138,7 @@ jobs:
           echo "#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo "<details><summary>Show Plan</summary>"  >> $GITHUB_STEP_SUMMARY
           printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          echo "${process.env.PLAN}"  >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.plan.outputs.stdout }}"  >> $GITHUB_STEP_SUMMARY
           printf '```\n' >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
     
