@@ -18,7 +18,7 @@ jobs:
   context:
     defaults:
       run:
-        working-directory: terraform/proj1
+        working-directory: ${{inputs.working-dir}}
     runs-on: ubuntu-latest
     if: ${{ false }}
     steps:
@@ -64,12 +64,12 @@ jobs:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_USE_OIDC: true # Allows logging into Azure using Federated ID
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
-      WORKING_DIR: terraform/proj1
+      WORKING_DIR: ${{inputs.working-dir}}
       TF_VAR_environment: ${{matrix.environment}}
  
     defaults:
       run:
-        working-directory: terraform/proj1
+        working-directory: ${{inputs.working-dir}}
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       id-token: write # write permission is required for az login
@@ -292,10 +292,10 @@ jobs:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
-      WORKING_DIR: terraform/proj1
+      WORKING_DIR: ${{inputs.working-dir}}
     defaults:
       run:
-        working-directory: terraform/proj1
+        working-directory: ${{inputs.working-dir}}
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       id-token: write # write permission is required for az login
