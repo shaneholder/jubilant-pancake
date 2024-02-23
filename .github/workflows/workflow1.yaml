@@ -159,6 +159,8 @@ jobs:
         \`\`\`
 
         </details>
+
+        *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
         EOF
 
     - name: cat Job Summary file
@@ -170,47 +172,45 @@ jobs:
       if: always()
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
 
-    - name: Update Job Summary
-      if: ${{ false }}
-      run: |
-
-          echo "#### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "<details><summary>Format Output</summary>" >> $GITHUB_STEP_SUMMARY
-          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.fmt.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          printf '```\n' >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-
-          echo ""
-          echo "#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`"  >> $GITHUB_STEP_SUMMARY
-          echo "<details><summary>Validation Output</summary>" >> $GITHUB_STEP_SUMMARY
-          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.init.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          printf '```\n' >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          echo ""
-          echo "#### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "<details><summary>Validation Output</summary>" >> $GITHUB_STEP_SUMMARY
-          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.validate.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          printf '```\n' >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          echo ""
-          echo "#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "<details><summary>Show Plan</summary>"  >> $GITHUB_STEP_SUMMARY
-          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.plan.outputs.stdout }}"  >> $GITHUB_STEP_SUMMARY
-          printf '```\n' >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
-    
-          # echo "*Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;" >> $GITHUB_STEP_SUMMARY
-          
     - uses: actions/github-script@v6
       if: always() && github.event_name == 'pull_request'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs')
+          // 1. Retrieve existing bot comments for the PR
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          })
+          const botComment = comments.find(comment => {
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
+          })
+    
+          // 2. Prepare format of the comment
+          const output = fs.readFileSync("summary.md")
+
+          // 3. If we have a comment, update it, otherwise create a new one
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+          }
+
+          
+    - uses: actions/github-script@v6
+      if: ${{false}} always() && github.event_name == 'pull_request'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
