@@ -189,7 +189,7 @@ jobs:
           })
     
           // 2. Prepare format of the comment
-          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md'))
+          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md')).toString()
 
           // 3. If we have a comment, update it, otherwise create a new one
           if (botComment) {
