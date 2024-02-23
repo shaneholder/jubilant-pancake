@@ -5,6 +5,9 @@ on:
       - 'terraform/**'
       - '.github/workflows/workflow1.yaml'
 
+permissions:
+  id-token: write # write permission is required for az login
+      
 jobs:
   run1:
     uses: ./.github/workflows/workflow1.yaml
