@@ -1,0 +1,21 @@
+run-name: Terraform Workflow Driver
+on: 
+  pull_request:
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/workflow1.yaml'
+
+permissions:
+  pull-requests: write # write permission in order to add comments for terraform output
+  id-token: write # write permission is required for az login
+      
+jobs:
+  run1:
+    uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/proj1"
+  fail-validation:
+    uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/fail-validation"
+          

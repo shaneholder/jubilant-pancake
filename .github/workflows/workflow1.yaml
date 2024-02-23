@@ -1,16 +1,28 @@
 run-name: First Workflow
-on: 
-  pull_request:
-    paths:
-      - 'terraform/**'
-      - '.github/workflows/workflow1.yaml'
+on:
+  workflow_call:
+    inputs:
+      working-dir:
+        type: string
+        required: true
+
+# on: 
+#   pull_request:
+#     paths:
+#       - 'terraform/**'
+#       - '.github/workflows/workflow1.yaml'
 permissions:
   id-token: write # write permission is required for az login
 
 jobs:
   context:
+    defaults:
+      run:
+        working-directory: ${{inputs.working-dir}}
     runs-on: ubuntu-latest
+    if: ${{ false }}
     steps:
+      - uses: actions/checkout@v4
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -37,10 +49,12 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
       
   plan:
+    continue-on-error: false
     strategy:
+      fail-fast: false
       matrix:
         environment: [development, production]
-    needs: [context]
+
     runs-on: ubuntu-latest
     environment: ${{matrix.environment}}-ro
     env:
@@ -48,14 +62,14 @@ jobs:
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      ARM_USE_OIDC: true
+      ARM_USE_OIDC: true # Allows logging into Azure using Federated ID
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
-      WORKING_DIR: terraform/proj1
+      WORKING_DIR: ${{inputs.working-dir}}
       TF_VAR_environment: ${{matrix.environment}}
  
     defaults:
       run:
-        working-directory: terraform/proj1
+        working-directory: ${{inputs.working-dir}}
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       id-token: write # write permission is required for az login
@@ -86,7 +100,7 @@ jobs:
 
     - name: Terraform fmt
       id: fmt
-      run: terraform fmt -check
+      run: terraform fmt -check -diff
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
@@ -111,9 +125,99 @@ jobs:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
           az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
-    
+
+    - name: Create Job Summary file
+      if: always()
+      run: |
+        cat <<EOF > summary.md
+        #### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
+        <details><summary>Format Output</summary>
+
+        \`\`\`
+        ${{ steps.fmt.outputs.stdout }}
+        \`\`\`
+
+        </details>
+
+        
+        #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+        <details><summary>Validation Output</summary>
+
+        \`\`\`
+        ${{ steps.init.outputs.stdout }}
+        \`\`\`
+
+        </details>
+        
+        #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+        <details><summary>Validation Output</summary>
+
+        \`\`\`
+        ${{ steps.validate.outputs.stdout }}
+        \`\`\`
+
+        </details>
+        
+        #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        <details><summary>Show Plan</summary>"
+
+        \`\`\`
+        ${{ steps.plan.outputs.stdout }}
+        \`\`\`
+
+        </details>
+
+        EOF
+
+    - name: cat Job Summary file
+      if: always()
+      run: |
+        cat summary.md
+
+    - name: Update Job Summary
+      if: always()
+      run: cat summary.md >> $GITHUB_STEP_SUMMARY
+
     - uses: actions/github-script@v6
-      if: github.event_name == 'pull_request'
+      if: always() && github.event_name == 'pull_request'
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs')
+          const path = require('path')
+          // 1. Retrieve existing bot comments for the PR
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          })
+          const botComment = comments.find(comment => {
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
+          })
+    
+          // 2. Prepare format of the comment
+          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md')).toString()
+
+          // 3. If we have a comment, update it, otherwise create a new one
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: output
+            })
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+          }
+
+          
+    - uses: actions/github-script@v6
+      if: ${{false}} always() && github.event_name == 'pull_request'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
@@ -188,10 +292,10 @@ jobs:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
-      WORKING_DIR: terraform/proj1
+      WORKING_DIR: ${{inputs.working-dir}}
     defaults:
       run:
-        working-directory: terraform/proj1
+        working-directory: ${{inputs.working-dir}}
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       id-token: write # write permission is required for az login
