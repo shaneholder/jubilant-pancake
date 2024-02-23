@@ -6,6 +6,7 @@ on:
       - '.github/workflows/workflow1.yaml'
 
 permissions:
+  pull-requests: write # write permission in order to add comments for terraform output
   id-token: write # write permission is required for az login
       
 jobs:
