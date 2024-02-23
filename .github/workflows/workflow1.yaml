@@ -38,9 +38,12 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
       
   plan:
+    continue-on-error: true
     strategy:
+      fail-fast: true
       matrix:
         environment: [development, production]
+
     runs-on: ubuntu-latest
     environment: ${{matrix.environment}}-ro
     env:
