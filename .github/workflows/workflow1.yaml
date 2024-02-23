@@ -13,7 +13,7 @@ jobs:
       run:
         working-directory: terraform/proj1
     runs-on: ubuntu-latest
-    # if: ${{ false }}
+    if: ${{ false }}
     steps:
       - uses: actions/checkout@v4
       - name: Dump GitHub context
@@ -55,7 +55,7 @@ jobs:
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
       ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      ARM_USE_OIDC: true
+      ARM_USE_OIDC: true # Allows logging into Azure using Federated ID
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: terraform/proj1
       TF_VAR_environment: ${{matrix.environment}}
@@ -189,7 +189,7 @@ jobs:
           })
     
           // 2. Prepare format of the comment
-          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md')
+          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md'))
 
           // 3. If we have a comment, update it, otherwise create a new one
           if (botComment) {
