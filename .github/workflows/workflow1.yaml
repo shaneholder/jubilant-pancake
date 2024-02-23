@@ -1,9 +1,12 @@
 run-name: First Workflow
-on: 
-  pull_request:
-    paths:
-      - 'terraform/**'
-      - '.github/workflows/workflow1.yaml'
+on:
+  workflow_call:
+    
+# on: 
+#   pull_request:
+#     paths:
+#       - 'terraform/**'
+#       - '.github/workflows/workflow1.yaml'
 permissions:
   id-token: write # write permission is required for az login
 

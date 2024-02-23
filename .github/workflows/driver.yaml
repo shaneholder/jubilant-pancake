@@ -1,0 +1,10 @@
+run-name: Terraform Workflow Driver
+on: 
+  pull_request:
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/workflow1.yaml'
+
+jobs:
+  run1:
+    uses: ./.github/workflows/workflow1.yaml
