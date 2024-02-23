@@ -139,7 +139,7 @@ jobs:
           echo "*Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;" >> $GITHUB_STEP_SUMMARY
           
     - uses: actions/github-script@v6
-      if: always && github.event_name == 'pull_request'
+      if: always() && github.event_name == 'pull_request'
       env:
         PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
       with:
