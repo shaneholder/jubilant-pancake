@@ -1,7 +1,11 @@
 run-name: First Workflow
 on:
   workflow_call:
-    
+    inputs:
+      working-dir:
+        type: string
+        required: true
+
 # on: 
 #   pull_request:
 #     paths:

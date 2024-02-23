@@ -12,3 +12,10 @@ permissions:
 jobs:
   run1:
     uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/proj1"
+  fail-validation:
+    uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/fail-validation"
+          
