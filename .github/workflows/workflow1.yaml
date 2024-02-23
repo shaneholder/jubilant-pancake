@@ -117,7 +117,46 @@ jobs:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
           az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
-    
+
+    - name: Create Job Summary file
+      if: always()
+      run: |
+        cat <<EOF > summary.md
+        #### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
+        <details><summary>Format Output</summary>
+        ```
+        ${{ steps.fmt.outputs.stdout }}
+        ```
+        </details>
+
+        
+        #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`"
+        <details><summary>Validation Output</summary>
+        ```
+        ${{ steps.init.outputs.stdout }}
+        ```
+        </details>
+        
+        #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+        <details><summary>Validation Output</summary>
+        ```
+        ${{ steps.validate.outputs.stdout }}
+        ```
+        </details>
+        
+        #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        <details><summary>Show Plan</summary>"
+        ```
+        ${{ steps.plan.outputs.stdout }}"
+        ```
+        </details>
+        EOF
+
+    - name: cat Job Summary file
+      if: always()
+      run: |
+        cat summary.md
+
     - name: Update Job Summary
       if: always()
       run: |
