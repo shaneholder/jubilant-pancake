@@ -121,7 +121,7 @@ jobs:
           echo "#### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`" >> $GITHUB_STEP_SUMMARY
 
           echo "<details><summary>Format Output</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "`\n" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.fmt.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
