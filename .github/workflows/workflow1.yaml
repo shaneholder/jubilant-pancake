@@ -124,31 +124,31 @@ jobs:
         cat <<EOF > summary.md
         #### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
         <details><summary>Format Output</summary>
-        ```
+
         ${{ steps.fmt.outputs.stdout }}
-        ```
+
         </details>
 
         
-        #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`"
+        #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
         <details><summary>Validation Output</summary>
-        ```
+
         ${{ steps.init.outputs.stdout }}
-        ```
+
         </details>
         
         #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
         <details><summary>Validation Output</summary>
-        ```
+
         ${{ steps.validate.outputs.stdout }}
-        ```
+
         </details>
         
         #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
         <details><summary>Show Plan</summary>"
-        ```
+
         ${{ steps.plan.outputs.stdout }}"
-        ```
+
         </details>
         EOF
 
