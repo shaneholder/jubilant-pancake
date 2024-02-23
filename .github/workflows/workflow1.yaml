@@ -122,28 +122,21 @@ jobs:
 
           echo "<details><summary>Format Output</summary>" >> $GITHUB_STEP_SUMMARY
           printf '\n```\n' >> $GITHUB_STEP_SUMMARY
-          # echo "" >> $GITHUB_STEP_SUMMARY
-          # echo '```' >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.fmt.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          printf '```\n' >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
 
           echo "<details><summary>Validation Output</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.validate.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          printf '```\n' >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
     
           echo "#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`" >> $GITHUB_STEP_SUMMARY
           echo "<details><summary>Show Plan</summary>"  >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "```" >> $GITHUB_STEP_SUMMARY
+          printf '\n```\n' >> $GITHUB_STEP_SUMMARY
           echo "${process.env.PLAN}"  >> $GITHUB_STEP_SUMMARY
-          echo "```"  >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          printf '```\n' >> $GITHUB_STEP_SUMMARY
           echo "</details>" >> $GITHUB_STEP_SUMMARY
     
           echo "*Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;" >> $GITHUB_STEP_SUMMARY
