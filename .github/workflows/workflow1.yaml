@@ -160,7 +160,7 @@ jobs:
 
         </details>
 
-        *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+        # *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
         EOF
 
     - name: cat Job Summary file
@@ -189,7 +189,7 @@ jobs:
           })
     
           // 2. Prepare format of the comment
-          const output = fs.readFileSync("summary.md")
+          const output = fs.readFileSync('summary.md')
 
           // 3. If we have a comment, update it, otherwise create a new one
           if (botComment) {
