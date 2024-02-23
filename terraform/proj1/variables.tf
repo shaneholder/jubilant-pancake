@@ -11,6 +11,6 @@ variable "resource_group_name_prefix" {
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "Environment"
 }
