@@ -133,7 +133,7 @@ jobs:
 
         
         #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-        <details><summary>Validation Output</summary>
+        <details><summary>Initialization Output</summary>
 
         \`\`\`
         ${{ steps.init.outputs.stdout }}
