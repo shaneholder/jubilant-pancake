@@ -9,8 +9,11 @@ permissions:
 
 jobs:
   context:
+    defaults:
+      run:
+        working-directory: terraform/proj1
     runs-on: ubuntu-latest
-    if: ${{ false }}
+    # if: ${{ false }}
     steps:
       - name: Dump GitHub context
         env:
