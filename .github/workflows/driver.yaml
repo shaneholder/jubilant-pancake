@@ -14,8 +14,10 @@ jobs:
     uses: ./.github/workflows/workflow1.yaml
     with:
       working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
   fail-validation:
     uses: ./.github/workflows/workflow1.yaml
     with:
       working-dir: "terraform/fail-validation"
+      terraform-version: "1.7.3"
           

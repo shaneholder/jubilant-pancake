@@ -5,12 +5,11 @@ on:
       working-dir:
         type: string
         required: true
+      terraform-version:
+        type: string
+        required: true
+        default: "1.7.3"
 
-# on: 
-#   pull_request:
-#     paths:
-#       - 'terraform/**'
-#       - '.github/workflows/workflow1.yaml'
 permissions:
   id-token: write # write permission is required for az login
 
@@ -81,18 +80,11 @@ jobs:
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Confirm Login DEBUG
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az account show        
-
     - uses: actions/checkout@v4
        
     - uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: "1.7.3"  
+        terraform_version: ${{ inputs.terraform-version }}
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
@@ -214,66 +206,7 @@ jobs:
               body: output
             })
           }
-
           
-    - uses: actions/github-script@v6
-      if: ${{false}} always() && github.event_name == 'pull_request'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          // 1. Retrieve existing bot comments for the PR
-          const { data: comments } = await github.rest.issues.listComments({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-          })
-          const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
-          })
-    
-          // 2. Prepare format of the comment
-          const output = `#### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-    
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-    
-          </details>
-    
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-    
-          <details><summary>Show Plan</summary>
-    
-          \`\`\`\n
-          ${process.env.PLAN}
-          \`\`\`
-    
-          </details>
-    
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-    
-          // 3. If we have a comment, update it, otherwise create a new one
-          if (botComment) {
-            github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: botComment.id,
-              body: output
-            })
-          } else {
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-          }
-
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
@@ -307,18 +240,11 @@ jobs:
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Confirm Login DEBUG
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az account show        
-
     - uses: actions/checkout@v4
         
     - uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: "1.7.3"  
+        terraform_version: ${{ inputs.terraform-version }}
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
@@ -342,6 +268,5 @@ jobs:
     - name: Terraform Apply
       id: apply
       run: terraform apply ${{ github.event.number }}.out
-      continue-on-error: true
     
         
