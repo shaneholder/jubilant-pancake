@@ -126,9 +126,9 @@ jobs:
         #### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
         <details><summary>Format Output</summary>
 
-        ``````
+        \`\`\`
         ${{ steps.fmt.outputs.stdout }}
-        ``````
+        \`\`\`
 
         </details>
 
@@ -150,7 +150,7 @@ jobs:
         #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
         <details><summary>Show Plan</summary>"
 
-        ${{ steps.plan.outputs.stdout }}"
+        ${{ steps.plan.outputs.stdout }}
 
         </details>
         EOF
