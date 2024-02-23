@@ -10,7 +10,7 @@ permissions:
 jobs:
   context:
     runs-on: ubuntu-latest
-    if: false
+    if: ${{ false }}
     steps:
       - name: Dump GitHub context
         env:
