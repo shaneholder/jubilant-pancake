@@ -177,6 +177,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const fs = require('fs')
+          const path = require('path')
           // 1. Retrieve existing bot comments for the PR
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
@@ -188,7 +189,7 @@ jobs:
           })
     
           // 2. Prepare format of the comment
-          const output = fs.readFileSync('summary.md')
+          const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md')
 
           // 3. If we have a comment, update it, otherwise create a new one
           if (botComment) {
