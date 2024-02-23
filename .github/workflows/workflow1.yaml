@@ -38,7 +38,7 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
       
   plan:
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: true
       matrix:
