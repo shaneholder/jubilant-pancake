@@ -1,13 +1,7 @@
 resource "github_repository_environment" "repo_environment" {
-  for_each    = toset(var.environments)
+  for_each    = local.environments
   repository  = data.github_repository.repo.name
   environment = each.key
-}
-
-resource "github_repository_environment" "repo_environment-ro" {
-  for_each    = toset(var.environments)
-  repository  = data.github_repository.repo.name
-  environment = "${each.key}-ro"
 }
 
 resource "github_actions_environment_variable" "client_id" {
@@ -19,7 +13,7 @@ resource "github_actions_environment_variable" "client_id" {
 }
 
 resource "github_actions_environment_variable" "storage_account_resource_group" {
-  for_each      = merge (tomap(github_repository_environment.repo_environment), tomap(github_repository_environment.repo_environment-ro))
+  for_each      = github_repository_environment.repo_environment
   repository    = data.github_repository.repo.name
   environment   = each.value.environment
   variable_name = "resource_group_name"
@@ -27,19 +21,11 @@ resource "github_actions_environment_variable" "storage_account_resource_group" 
 }
 
 resource "github_actions_environment_variable" "storage_account" {
-  for_each      = merge (tomap(github_repository_environment.repo_environment), tomap(github_repository_environment.repo_environment-ro))
+  for_each      = github_repository_environment.repo_environment
   repository    = data.github_repository.repo.name
   environment   = each.value.environment
   variable_name = "storage_account_name"
   value         = azurerm_storage_account.terraform_state.name
-}
-
-resource "github_actions_environment_variable" "client_id_ro" {
-  for_each      = github_repository_environment.repo_environment
-  repository    = data.github_repository.repo.name
-  environment   = format("%s-ro", each.value.environment)
-  variable_name = "AZURE_CLIENT_ID"
-  value         = azuread_application.environment-ro[each.value.environment].client_id
 }
 
 resource "github_actions_variable" "subscription_id" {
