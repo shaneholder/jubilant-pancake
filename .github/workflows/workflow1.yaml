@@ -65,6 +65,8 @@ jobs:
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
       TF_VAR_environment: ${{matrix.environment}}
+      TF_VAR_resource_group_name: ${{vars.RESOURCE_GROUP_NAME}}
+      TF_VAR_storage_account_name: ${{vars.STORAGE_ACCOUNT_NAME}}
  
     defaults:
       run:
@@ -220,6 +222,9 @@ jobs:
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
+      TF_VAR_resource_group_name: ${{vars.RESOURCE_GROUP_NAME}}
+      TF_VAR_storage_account_name: ${{vars.STORAGE_ACCOUNT_NAME}}
+
     defaults:
       run:
         working-directory: ${{inputs.working-dir}}

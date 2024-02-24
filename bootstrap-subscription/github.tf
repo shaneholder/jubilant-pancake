@@ -22,7 +22,7 @@ resource "github_actions_environment_variable" "storage_account_resource_group" 
   for_each      = merge (tomap(github_repository_environment.repo_environment), tomap(github_repository_environment.repo_environment-ro))
   repository    = data.github_repository.repo.name
   environment   = each.value.environment
-  variable_name = "TF_VAR_resource_group_name"
+  variable_name = "resource_group_name"
   value         = azurerm_resource_group.rg.name
 }
 
@@ -30,7 +30,7 @@ resource "github_actions_environment_variable" "storage_account" {
   for_each      = merge (tomap(github_repository_environment.repo_environment), tomap(github_repository_environment.repo_environment-ro))
   repository    = data.github_repository.repo.name
   environment   = each.value.environment
-  variable_name = "TF_VAR_storage_account_name"
+  variable_name = "storage_account_name"
   value         = azurerm_storage_account.terraform_state.name
 }
 
