@@ -1,5 +1,5 @@
 variable "environments" {
-  type = list(string)
+  type    = list(string)
   default = ["production", "development"]
 }
 
@@ -8,10 +8,10 @@ variable "org" {
 }
 
 variable "repo" {
-  type = string  
+  type = string
 }
 
 variable "location" {
-  type = string
+  type    = string
   default = "centralus"
 }

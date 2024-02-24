@@ -161,17 +161,11 @@ jobs:
 
         EOF
 
-    - name: cat Job Summary file
-      if: always()
-      run: |
-        cat summary.md
-
     - name: Update Job Summary
-      if: always()
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
 
     - uses: actions/github-script@v6
-      if: always() && github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
