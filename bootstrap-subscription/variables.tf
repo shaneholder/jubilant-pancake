@@ -1,6 +1,18 @@
 variable "environments" {
-  type    = list(string)
-  default = ["production", "development"]
+  type    = list(object({
+    name = string,
+    approval = bool
+  }))
+  default = [
+    {
+      name = "production",
+      approval = true
+    },
+    {
+      name = "development",
+      approval = false
+    }
+  ]
 }
 
 variable "org" {

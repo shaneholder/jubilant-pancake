@@ -6,8 +6,13 @@ resource "github_repository_environment" "repo_environment" {
   for_each    = local.environments
   repository  = data.github_repository.repo.name
   environment = each.key
-  reviewers {
-    users = [ data.github_user.current.id ]
+
+  dynamic "reviewers" {
+    for_each = each.value.approval ? [1] : []
+
+    content {
+      users = [ data.github_user.current.id ]      
+    }
   }
 }
 
