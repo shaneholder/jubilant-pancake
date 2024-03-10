@@ -40,6 +40,9 @@ resource "azurerm_storage_container" "plans" {
 }
 
 resource "azurerm_role_definition" "example" {
+  # Custom role to limit read only environments access to modify the state files
+  # Read only should not need to modify, but upon init they may need to create 
+  # the state file
   name        = "Terraform Read Only"
   description = "Read only role for Terraform but allow Create access on continer this is so that the plan can run which will create a state file if it does not exist"
 
@@ -47,16 +50,14 @@ resource "azurerm_role_definition" "example" {
 
   permissions {
     actions = [
-      "Microsoft.Storage/storageAccounts/blobServices/containers/delete",
-      "Microsoft.Storage/storageAccounts/blobServices/containers/read",
-      "Microsoft.Storage/storageAccounts/blobServices/containers/write",
-      "Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action"
+      # "Microsoft.Storage/storageAccounts/blobServices/containers/delete",
+      # "Microsoft.Storage/storageAccounts/blobServices/containers/read",
+      # "Microsoft.Storage/storageAccounts/blobServices/containers/write",
+      # "Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action"
     ]
     data_actions = [
-      "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read",
-      "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
-      "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/move/action",
+      # "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/add/action"
     ]
     not_actions = []
@@ -89,22 +90,26 @@ resource "azuread_application_federated_identity_credential" "environment_cred" 
 }
 
 resource "azurerm_role_assignment" "storage_contributor" {
-  for_each             = {for k,v in local.environments : k => v if !v.readonly }
+  # Regular environments get contributor on the container for state files
+  for_each             = { for k, v in local.environments : k => v if !v.readonly }
   scope                = azurerm_storage_container.tfstate.resource_manager_id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azuread_service_principal.environment[each.key].object_id
 }
 
+resource "azurerm_role_assignment" "terraform_readonly_tfstate" {
+  # Read only environments get the custom permission
+  for_each           = { for k, v in local.environments : k => v if v.readonly }
+  scope              = azurerm_storage_container.tfstate.resource_manager_id
+  role_definition_id = azurerm_role_definition.example.role_definition_resource_id
+  principal_id       = azuread_service_principal.environment[each.key].object_id
+}
+
 resource "azurerm_role_assignment" "terraform_contrib_plans" {
-  for_each             = {for k,v in local.environments  : k => v if v.readonly }
+  # All environments get contributor on the plan container
+  for_each             = local.environments
   scope                = azurerm_storage_container.plans.resource_manager_id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azuread_service_principal.environment[each.key].object_id
 }
 
-resource "azurerm_role_assignment" "terraform_readonly_tfstate" {
-  for_each           = {for k,v in local.environments : k => v if v.readonly }
-  scope              = azurerm_storage_container.tfstate.resource_manager_id
-  role_definition_id = azurerm_role_definition.example.role_definition_resource_id
-  principal_id       = azuread_service_principal.environment[each.key].object_id
-}
