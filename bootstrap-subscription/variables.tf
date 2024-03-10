@@ -4,10 +4,12 @@ variable "environments" {
 }
 
 variable "org" {
+  description = "What is the github org"
   type = string
 }
 
 variable "repo" {
+  description = "Name of github repository"
   type = string
 }
 

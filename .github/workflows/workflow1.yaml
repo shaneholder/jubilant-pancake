@@ -113,6 +113,7 @@ jobs:
     - name: Save Plan
       # Store the plan so it can be used in the apply
       uses: azure/cli@v1
+      if: success()
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}

@@ -57,7 +57,7 @@ resource "azurerm_role_definition" "example" {
     ]
     data_actions = [
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read",
-      # "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
+      "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/add/action"
     ]
     not_actions = []
@@ -94,6 +94,22 @@ resource "azurerm_role_assignment" "storage_contributor" {
   for_each             = { for k, v in local.environments : k => v if !v.readonly }
   scope                = azurerm_storage_container.tfstate.resource_manager_id
   role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azuread_service_principal.environment[each.key].object_id
+}
+
+resource "azurerm_role_assignment" "subscription_contributor" {
+  # Regular environments get contributor on the subscription
+  for_each             = { for k, v in local.environments : k => v if !v.readonly }
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.environment[each.key].object_id
+}
+
+resource "azurerm_role_assignment" "subscription_reader" {
+  # Read Only Envs get Reader
+  for_each             = { for k, v in local.environments : k => v if v.readonly }
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Reader"
   principal_id         = azuread_service_principal.environment[each.key].object_id
 }
 
