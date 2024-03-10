@@ -7,6 +7,6 @@ locals {
 
 resource "local_file" "var_file" {
   # Generate the conf file for the remote state backend
-  filename = "variable.tfvars"
+  filename = "variables.tfvars"
   content  = local.var_file
 }

@@ -1,7 +1,14 @@
+data "github_user" "current" {
+  username = ""
+}
+
 resource "github_repository_environment" "repo_environment" {
   for_each    = local.environments
   repository  = data.github_repository.repo.name
   environment = each.key
+  reviewers {
+    users = [ data.github_user.current.id ]
+  }
 }
 
 resource "github_actions_environment_variable" "client_id" {

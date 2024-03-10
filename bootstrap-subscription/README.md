@@ -42,6 +42,6 @@ by the `repo` variable.
 ## Cleanup
 
 ```
-terraform -chdir=bootstrap-subscription destroy -auto-approve -var-file=variable.tfvars
-terraform -chdir=bootstrap-subscription/create-remote-state destroy -var-file=variable.tfvars -auto-approve
+terraform -chdir=bootstrap-subscription destroy -auto-approve -var-file=variables.tfvars
+terraform -chdir=bootstrap-subscription/create-remote-state destroy -var-file=variables.tfvars -auto-approve
 ```
