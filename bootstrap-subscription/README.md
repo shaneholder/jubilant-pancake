@@ -14,7 +14,15 @@ terraform -chdir=bootstrap-subscription/create-remote-state plan -out=plan.out
 terraform -chdir=bootstrap-subscription/create-remote-state apply plan.out
 ```
 
-This should generate the init.conf file used by the Subscription bootstrap process
+Additional plans can use the variables.tfvar file that is generated on the first run.
+This fill will not be removed during a destroy.
+
+```
+terraform -chdir=bootstrap-subscription/create-remote-state plan -out=plan.out -var-file variables.tfvars
+```
+
+This should generate the init.conf file used by the Subscription bootstrap process.  Will also generate 
+variables.tfvars file with user choices.
 
 ## Bootstrap the Subscription and GitHub
 
@@ -34,6 +42,6 @@ by the `repo` variable.
 ## Cleanup
 
 ```
-terraform -chdir=bootstrap-subscription destroy -auto-approve
-terraform -chdir=bootstrap-subscription/create-remote-state destroy -auto-approve
+terraform -chdir=bootstrap-subscription destroy -auto-approve -var-file=variable.tfvars
+terraform -chdir=bootstrap-subscription/create-remote-state destroy -var-file=variable.tfvars -auto-approve
 ```

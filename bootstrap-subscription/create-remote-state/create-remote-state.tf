@@ -11,6 +11,11 @@ provider "azurerm" {
   features {}
 }
 
+variable "location" {
+  description = "Azure Region to use."
+  type = string
+}
+
 resource "random_string" "resource_code" {
   length  = 5
   special = false
@@ -18,12 +23,12 @@ resource "random_string" "resource_code" {
 }
 
 resource "azurerm_resource_group" "tfstate" {
-  name     = "tfstate"
-  location = "centralus"
+  name     = "bootstrap-tfstate"
+  location = var.location
 }
 
 resource "azurerm_storage_account" "tfstate" {
-  name                     = "tfstate${random_string.resource_code.result}"
+  name                     = "bootstrap${random_string.resource_code.result}"
   resource_group_name      = azurerm_resource_group.tfstate.name
   location                 = azurerm_resource_group.tfstate.location
   account_tier             = "Standard"
@@ -37,7 +42,6 @@ resource "azurerm_storage_container" "tfstate" {
   container_access_type = "private"
 }
 
-
 locals {
   init_config = <<-EOT
     resource_group_name="${azurerm_resource_group.tfstate.name}"
@@ -45,12 +49,30 @@ locals {
     container_name="${azurerm_storage_container.tfstate.name}"
     key="init.tfstate"  
   EOT
+
+  var_file = <<-EOT
+    location="${var.location}"
+  EOT
+}
+
+resource "local_file" "var_file" {
+  # Generate the conf file for the remote state backend
+  # This file will remain during a destroy
+  filename = "variables.tfvars"
+  content  = local.var_file
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "local_file" "init_config" {
   # Generate the conf file for the remote state backend
+  # This file will remain during a destroy
   filename = "../init.conf"
   content  = local.init_config
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "resource_group_name" {
