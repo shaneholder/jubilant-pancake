@@ -15,7 +15,7 @@ terraform -chdir=bootstrap-subscription/create-remote-state apply plan.out
 ```
 
 Additional plans can use the variables.tfvar file that is generated on the first run.
-This fill will not be removed during a destroy.
+This file will not be removed during a destroy.
 
 ```
 terraform -chdir=bootstrap-subscription/create-remote-state plan -out=plan.out -var-file variables.tfvars

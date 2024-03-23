@@ -15,9 +15,24 @@ jobs:
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
+      environment: development
   fail-validation:
     uses: ./.github/workflows/workflow1.yaml
     with:
       working-dir: "terraform/fail-validation"
       terraform-version: "1.7.3"
-          
+      environment: development
+  dev-scenario:
+    uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: development
+  prod-scenario:
+    uses: ./.github/workflows/workflow1.yaml
+    needs: [dev-scenario]
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: production
+    
