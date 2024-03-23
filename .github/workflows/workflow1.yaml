@@ -17,39 +17,6 @@ permissions:
   id-token: write # write permission is required for az login
 
 jobs:
-  context:
-    defaults:
-      run:
-        working-directory: ${{inputs.working-dir}}
-    runs-on: ubuntu-latest
-    if: ${{ false }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump inputs context
-        env:
-          inputs_CONTEXT: ${{ toJson(inputs) }}
-        run: echo "$inputs_CONTEXT"
-      
   plan:
     continue-on-error: false
 
