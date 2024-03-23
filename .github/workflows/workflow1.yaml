@@ -111,7 +111,7 @@ jobs:
 
     - name: Save Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@v1
+      uses: azure/cli@v2
       if: success()
       with:
         inlineScript: |
@@ -226,7 +226,7 @@ jobs:
       id-token: write # write permission is required for az login
     steps:
     - name: Azure login
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
