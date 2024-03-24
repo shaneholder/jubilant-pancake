@@ -16,12 +16,18 @@ jobs:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
+
   fail-validation:
     runs-on: ubuntu-latest
     steps:
 
     - uses: actions/checkout@v4
-    
+    - name: Check
+      run: |
+        pwd
+        ls ./
+        ls ./.github/
+
     - name: Should Fail
       uses: ./.github/workflows/workflow1.yaml
       with:
