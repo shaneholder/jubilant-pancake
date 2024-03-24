@@ -5,58 +5,23 @@ on:
       working-dir:
         type: string
         required: true
+      terraform-version:
+        type: string
+        required: true
+        default: "1.7.3"
+      environment:
+        type: string
+        required: true
 
-# on: 
-#   pull_request:
-#     paths:
-#       - 'terraform/**'
-#       - '.github/workflows/workflow1.yaml'
 permissions:
   id-token: write # write permission is required for az login
 
 jobs:
-  context:
-    defaults:
-      run:
-        working-directory: ${{inputs.working-dir}}
-    runs-on: ubuntu-latest
-    if: ${{ false }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
-      
   plan:
     continue-on-error: false
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: [development, production]
 
     runs-on: ubuntu-latest
-    environment: ${{matrix.environment}}-ro
+    environment: ${{ inputs.environment }}-ro
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
@@ -65,7 +30,7 @@ jobs:
       ARM_USE_OIDC: true # Allows logging into Azure using Federated ID
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
-      TF_VAR_environment: ${{matrix.environment}}
+      TF_VAR_environment: ${{inputs.environment}}
  
     defaults:
       run:
@@ -75,28 +40,21 @@ jobs:
       id-token: write # write permission is required for az login
     steps:
     - name: Azure login
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Confirm Login DEBUG
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az account show        
-
     - uses: actions/checkout@v4
        
     - uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: "1.7.3"  
+        terraform_version: ${{ inputs.terraform-version }}
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat ${{matrix.environment}}.conf >> ${GITHUB_ENV}
+      run: cat ${{inputs.environment}}.conf >> ${GITHUB_ENV}
 
     - name: Terraform fmt
       id: fmt
@@ -107,7 +65,7 @@ jobs:
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=${{matrix.environment}}.conf
+      run: terraform init -backend-config=${{inputs.environment}}.conf -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
     
     - name: Terraform Validate
       id: validate
@@ -120,17 +78,18 @@ jobs:
 
     - name: Save Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@v1
+      uses: azure/cli@v2
+      if: success()
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
+          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
 
     - name: Create Job Summary file
       if: always()
       run: |
         cat <<EOF > summary.md
-        #### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
+        #### Terraform Format and Style ${{inputs.environment}}🖌\`${{ steps.fmt.outcome }}\`
         <details><summary>Format Output</summary>
 
         \`\`\`
@@ -141,7 +100,7 @@ jobs:
 
         
         #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-        <details><summary>Validation Output</summary>
+        <details><summary>Initialization Output</summary>
 
         \`\`\`
         ${{ steps.init.outputs.stdout }}
@@ -159,7 +118,7 @@ jobs:
         </details>
         
         #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-        <details><summary>Show Plan</summary>"
+        <details><summary>Show Plan</summary>
 
         \`\`\`
         ${{ steps.plan.outputs.stdout }}
@@ -169,17 +128,11 @@ jobs:
 
         EOF
 
-    - name: cat Job Summary file
-      if: always()
-      run: |
-        cat summary.md
-
     - name: Update Job Summary
-      if: always()
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
 
     - uses: actions/github-script@v6
-      if: always() && github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
@@ -192,7 +145,7 @@ jobs:
             issue_number: context.issue.number,
           })
           const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{inputs.environment}}')
           })
     
           // 2. Prepare format of the comment
@@ -214,77 +167,15 @@ jobs:
               body: output
             })
           }
-
           
-    - uses: actions/github-script@v6
-      if: ${{false}} always() && github.event_name == 'pull_request'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          // 1. Retrieve existing bot comments for the PR
-          const { data: comments } = await github.rest.issues.listComments({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-          })
-          const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{matrix.environment}}')
-          })
-    
-          // 2. Prepare format of the comment
-          const output = `#### Terraform Format and Style ${{matrix.environment}}🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-          <details><summary>Validation Output</summary>
-    
-          \`\`\`\n
-          ${{ steps.validate.outputs.stdout }}
-          \`\`\`
-    
-          </details>
-    
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-    
-          <details><summary>Show Plan</summary>
-    
-          \`\`\`\n
-          ${process.env.PLAN}
-          \`\`\`
-    
-          </details>
-    
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
-    
-          // 3. If we have a comment, update it, otherwise create a new one
-          if (botComment) {
-            github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: botComment.id,
-              body: output
-            })
-          } else {
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-          }
-
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
   apply:
-    strategy:
-      matrix:
-        environment: [development, production]    
     needs: [plan]
     runs-on: ubuntu-latest
-    environment: ${{matrix.environment}}
+    environment: ${{ inputs.environment }}
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
@@ -293,6 +184,7 @@ jobs:
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
+
     defaults:
       run:
         working-directory: ${{inputs.working-dir}}
@@ -301,35 +193,28 @@ jobs:
       id-token: write # write permission is required for az login
     steps:
     - name: Azure login
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Confirm Login DEBUG
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az account show        
-
     - uses: actions/checkout@v4
         
     - uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: "1.7.3"  
+        terraform_version: ${{ inputs.terraform-version }}
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat ${{matrix.environment}}.conf >> ${GITHUB_ENV}
+      run: cat ${{inputs.environment}}.conf >> ${GITHUB_ENV}
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=${{matrix.environment}}.conf
+      run: terraform init -backend-config=${{inputs.environment}}.conf -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
@@ -337,11 +222,10 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ env.storage_account_name }} --container-name plans --name ${{ github.event.number }}_${{matrix.environment}}.out
+          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
       
     - name: Terraform Apply
       id: apply
       run: terraform apply ${{ github.event.number }}.out
-      continue-on-error: true
     
         
