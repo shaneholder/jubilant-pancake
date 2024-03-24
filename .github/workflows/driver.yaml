@@ -19,6 +19,9 @@ jobs:
   fail-validation:
     runs-on: ubuntu-latest
     steps:
+
+    - uses: actions/checkout@v4
+    
     - name: Should Fail
       uses: ./.github/workflows/workflow1.yaml
       with:
