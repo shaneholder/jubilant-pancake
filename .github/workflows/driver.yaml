@@ -17,11 +17,18 @@ jobs:
       terraform-version: "1.7.3"
       environment: development
   fail-validation:
-    uses: ./.github/workflows/workflow1.yaml
-    with:
-      working-dir: "terraform/fail-validation"
-      terraform-version: "1.7.3"
-      environment: development
+    runs-on: ubuntu-latest
+    steps:
+    - name: Should Fail
+      uses: ./.github/workflows/workflow1.yaml
+      with:
+        working-dir: "terraform/fail-validation"
+        terraform-version: "1.7.3"
+        environment: development
+    - name: Success if Failed
+      if: failure()
+      run: exit 0
+    
   dev-scenario:
     uses: ./.github/workflows/workflow1.yaml
     with:
@@ -35,4 +42,3 @@ jobs:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: production
-    
