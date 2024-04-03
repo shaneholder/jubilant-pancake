@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   plan:
-    if: ${{ vars.action == 'plan' }}
+    if: ${{ inputs.action == 'plan' }}
     continue-on-error: false
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}-ro
@@ -176,7 +176,7 @@ jobs:
       run: exit 1
 
   apply:
-    if: ${{ vars.action == 'apply' }}
+    if: ${{ inputs.action == 'apply' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
