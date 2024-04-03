@@ -12,14 +12,17 @@ on:
       environment:
         type: string
         required: true
+      action:
+        type: string
+        required: true
 
 permissions:
   id-token: write # write permission is required for az login
 
 jobs:
   plan:
+    if: ${{ vars.action == 'plan' }}
     continue-on-error: false
-
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}-ro
     env:
@@ -173,7 +176,7 @@ jobs:
       run: exit 1
 
   apply:
-    needs: [plan]
+    if: ${{ vars.action == 'apply' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:

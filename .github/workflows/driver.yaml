@@ -10,43 +10,59 @@ permissions:
   id-token: write # write permission is required for az login
       
 jobs:
-  run1:
-    uses: ./.github/workflows/workflow1.yaml
-    with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
-      environment: development
+  # run1:
+  #   uses: ./.github/workflows/workflow1.yaml
+  #   with:
+  #     working-dir: "terraform/proj1"
+  #     terraform-version: "1.7.3"
+  #     environment: development
 
-  fail-validation:
-    runs-on: ubuntu-latest
-    steps:
+  # fail-validation:
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-    - uses: actions/checkout@v4
-    - name: Check
-      run: |
-        pwd
-        ls ./.github/workflows/
+  #   - uses: actions/checkout@v4
+  #   - name: Check
+  #     run: |
+  #       pwd
+  #       ls ./.github/workflows/
 
-    - name: Should Fail
-      uses: ./.github/workflows/workflow1.yaml
-      with:
-        working-dir: "terraform/fail-validation"
-        terraform-version: "1.7.3"
-        environment: development
-    - name: Success if Failed
-      if: failure()
-      run: exit 0
+  #   - name: Should Fail
+  #     uses: ./.github/workflows/workflow1.yaml
+  #     with:
+  #       working-dir: "terraform/fail-validation"
+  #       terraform-version: "1.7.3"
+  #       environment: development
+  #   - name: Success if Failed
+  #     if: failure()
+  #     run: exit 0
     
-  dev-scenario:
+  dev-scenario-plan:
     uses: ./.github/workflows/workflow1.yaml
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
-  prod-scenario:
+      action: plan
+  dev-scenario-apply:
     uses: ./.github/workflows/workflow1.yaml
-    needs: [dev-scenario]
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: development
+      action: apply
+  prod-scenario-plan:
+    uses: ./.github/workflows/workflow1.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: production    
+      action: plan
+  prod-scenario-apply:
+    uses: ./.github/workflows/workflow1.yaml
+    needs: [dev-scenario-apply, prod-scenario-plan]
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: production
+      action: apply
