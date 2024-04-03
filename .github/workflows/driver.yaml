@@ -38,32 +38,28 @@ jobs:
   #     run: exit 0
     
   dev-scenario-plan:
-    uses: ./.github/workflows/workflow1.yaml
+    uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
-      action: plan
   dev-scenario-apply:
-    uses: ./.github/workflows/workflow1.yaml
+    uses: ./.github/workflows/apply.yaml
     needs: [dev-scenario-plan]
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
-      action: apply
   prod-scenario-plan:
-    uses: ./.github/workflows/workflow1.yaml
+    uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: production    
-      action: plan
   prod-scenario-apply:
-    uses: ./.github/workflows/workflow1.yaml
+    uses: ./.github/workflows/apply.yaml
     needs: [dev-scenario-apply, prod-scenario-plan]
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: production
-      action: apply
