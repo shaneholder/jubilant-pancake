@@ -46,6 +46,7 @@ jobs:
       action: plan
   dev-scenario-apply:
     uses: ./.github/workflows/workflow1.yaml
+    needs: [dev-scenario-plan]
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
