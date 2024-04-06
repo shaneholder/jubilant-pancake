@@ -42,7 +42,7 @@ jobs:
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
-      environment: development-ro
+      environment: development
   dev-scenario-apply:
     uses: ./.github/workflows/apply.yaml
     needs: [dev-scenario-plan]
@@ -55,7 +55,7 @@ jobs:
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
-      environment: production-ro    
+      environment: production    
   prod-scenario-apply:
     uses: ./.github/workflows/apply.yaml
     needs: [dev-scenario-apply, prod-scenario-plan]
