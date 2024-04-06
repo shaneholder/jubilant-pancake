@@ -20,7 +20,7 @@ jobs:
   plan:
     continue-on-error: false
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}-ro
+    environment: ${{ inputs.environment }}
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
