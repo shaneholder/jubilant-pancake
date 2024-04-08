@@ -20,7 +20,7 @@ jobs:
   plan:
     continue-on-error: false
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}-ro
+    environment: ${{ inputs.environment }}-ro  # this allows targeting of a different credential when accessing environments so that plan uses different cred than apply
     env:
       # Set environment variables for terraform init backend
       ARM_TENANT_ID: ${{vars.AZURE_TENANT_ID}}
