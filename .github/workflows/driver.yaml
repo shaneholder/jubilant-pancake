@@ -10,12 +10,56 @@ permissions:
   id-token: write # write permission is required for az login
       
 jobs:
-  run1:
-    uses: ./.github/workflows/workflow1.yaml
+  # run1:
+  #   uses: ./.github/workflows/workflow1.yaml
+  #   with:
+  #     working-dir: "terraform/proj1"
+  #     terraform-version: "1.7.3"
+  #     environment: development
+
+  # fail-validation:
+  #   runs-on: ubuntu-latest
+  #   steps:
+
+  #   - uses: actions/checkout@v4
+  #   - name: Check
+  #     run: |
+  #       pwd
+  #       ls ./.github/workflows/
+
+  #   - name: Should Fail
+  #     uses: ./.github/workflows/workflow1.yaml
+  #     with:
+  #       working-dir: "terraform/fail-validation"
+  #       terraform-version: "1.7.3"
+  #       environment: development
+  #   - name: Success if Failed
+  #     if: failure()
+  #     run: exit 0
+    
+  dev-scenario-plan:
+    uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
-  fail-validation:
-    uses: ./.github/workflows/workflow1.yaml
+      terraform-version: "1.7.3"
+      environment: development
+  dev-scenario-apply:
+    uses: ./.github/workflows/apply.yaml
+    needs: [dev-scenario-plan]
     with:
-      working-dir: "terraform/fail-validation"
-          
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: development
+  prod-scenario-plan:
+    uses: ./.github/workflows/plan.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: production    
+  prod-scenario-apply:
+    uses: ./.github/workflows/apply.yaml
+    needs: [dev-scenario-apply, prod-scenario-plan]
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: production
