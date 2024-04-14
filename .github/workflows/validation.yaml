@@ -1,5 +1,5 @@
-run-name: Terraform Verification
-name: Terraform Verification
+run-name: Terraform validation
+name: Terraform validation
 on:
   workflow_call:
     inputs:
@@ -12,7 +12,7 @@ on:
         default: "1.7.3"
 
 jobs:
-  verification:
+  validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
