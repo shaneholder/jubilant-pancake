@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   verification:
-    uses: ./github/workflows/verification.yaml
+    uses: ./.github/workflows/verification.yaml
     with:
       working-dir: ${{ inputs.working-dir }}
       terraform-version: ${{ inputs.terraform-version }}
