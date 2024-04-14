@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - 'terraform/**'
-      - '.github/workflows/workflow1.yaml'
+      - '.github/workflows/*.yaml'
 
 permissions:
   pull-requests: write # write permission in order to add comments for terraform output
