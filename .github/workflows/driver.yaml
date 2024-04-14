@@ -37,8 +37,15 @@ jobs:
   #   - name: Success if Failed
   #     if: failure()
   #     run: exit 0
-    
+
+  validation:
+    uses: ./.github/workflows/validation.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+
   dev-scenario-plan:
+    needs: [validation]
     uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
@@ -52,6 +59,7 @@ jobs:
       terraform-version: "1.7.3"
       environment: development
   prod-scenario-plan:
+    needs: [validation]
     uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
