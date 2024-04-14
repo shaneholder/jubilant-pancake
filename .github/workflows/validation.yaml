@@ -1,0 +1,25 @@
+run-name: Terraform Verification
+on:
+  workflow_call:
+    inputs:
+      working-dir:
+        type: string
+        required: true
+      terraform-version:
+        type: string
+        required: true
+        default: "1.7.3"
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+  
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check -diff
