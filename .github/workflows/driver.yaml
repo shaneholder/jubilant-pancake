@@ -1,4 +1,5 @@
 run-name: Terraform Workflow Driver
+name: Terraform Workflow Driver
 on: 
   pull_request:
     paths:

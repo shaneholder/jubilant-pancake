@@ -1,4 +1,5 @@
 run-name: Terraform Verification
+name: Terraform Verification
 on:
   workflow_call:
     inputs:
