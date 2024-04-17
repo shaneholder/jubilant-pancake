@@ -1,4 +1,5 @@
 run-name: Terraform Apply
+name: Terraform Apply
 on:
   workflow_call:
     inputs:

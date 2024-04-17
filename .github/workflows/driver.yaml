@@ -1,13 +1,15 @@
 run-name: Terraform Workflow Driver
+name: Terraform Workflow Driver
 on: 
   pull_request:
     paths:
       - 'terraform/**'
-      - '.github/workflows/workflow1.yaml'
+      - '.github/workflows/*.yaml'
 
 permissions:
   pull-requests: write # write permission in order to add comments for terraform output
   id-token: write # write permission is required for az login
+  contents: write
       
 jobs:
   # run1:
@@ -36,8 +38,15 @@ jobs:
   #   - name: Success if Failed
   #     if: failure()
   #     run: exit 0
-    
+
+  validation:
+    uses: ./.github/workflows/validation.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+
   dev-scenario-plan:
+    needs: [validation]
     uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"
@@ -51,6 +60,7 @@ jobs:
       terraform-version: "1.7.3"
       environment: development
   prod-scenario-plan:
+    needs: [validation]
     uses: ./.github/workflows/plan.yaml
     with:
       working-dir: "terraform/proj1"

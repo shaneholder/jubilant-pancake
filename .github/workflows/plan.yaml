@@ -1,4 +1,5 @@
 run-name: Terraform Plan
+name: Terraform Plan
 on:
   workflow_call:
     inputs:
@@ -17,14 +18,8 @@ permissions:
   id-token: write # write permission is required for az login
 
 jobs:
-  verification:
-    uses: ./.github/workflows/verification.yaml
-    with:
-      working-dir: ${{ inputs.working-dir }}
-      terraform-version: ${{ inputs.terraform-version }}
 
   plan:
-    needs: [verification]
     continue-on-error: false
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}-ro  # this allows targeting of a different credential when accessing environments so that plan uses different cred than apply
