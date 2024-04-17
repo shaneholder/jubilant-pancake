@@ -57,7 +57,7 @@ jobs:
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat ${{inputs.environment}}.tfbackend >> ${GITHUB_ENV}
+      run: cat backends/${{inputs.environment}}.tfbackend >> ${GITHUB_ENV}
 
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
