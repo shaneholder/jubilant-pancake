@@ -29,6 +29,8 @@ jobs:
       ARM_USE_OIDC: true
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
+      # Depending on variables used in terraform add more variables here
+      # eg: TF_VAR_AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
     defaults:
       run:
@@ -52,14 +54,14 @@ jobs:
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat ${{inputs.environment}}.conf >> ${GITHUB_ENV}
+      run: cat ${{inputs.environment}}.tfbackend >> ${GITHUB_ENV}
     
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=${{inputs.environment}}.conf -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
+      run: terraform init -backend-config=backends/${{inputs.environment}}.tfbackend -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
     
     - name: Download Plan
       # Store the plan so it can be used in the apply

@@ -32,7 +32,9 @@ jobs:
       ARM_USE_AZUREAD: true # setting so that Storage Blob Data Owner can be used and listkeys action is not required
       WORKING_DIR: ${{inputs.working-dir}}
       TF_VAR_environment: ${{inputs.environment}}
- 
+       # Depending on variables used in terraform add more variables here
+      # eg: TF_VAR_AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
     defaults:
       run:
         working-directory: ${{inputs.working-dir}}
@@ -55,18 +57,14 @@ jobs:
 
     - name: Load Backend Configuration
       # Allows the usage of envrionemnt variables
-      run: cat ${{inputs.environment}}.conf >> ${GITHUB_ENV}
+      run: cat ${{inputs.environment}}.tfbackend >> ${GITHUB_ENV}
 
     - name: Terraform Init
       # To run init ensure that the client id has Storage Blob Data Owner
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=${{inputs.environment}}.conf -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
-    
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
+      run: terraform init -no-color -backend-config=backends/${{inputs.environment}}.tfbackend -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
     
     - name: Terraform Plan
       id: plan
@@ -85,41 +83,33 @@ jobs:
     - name: Create Job Summary file
       if: always()
       run: |
-        cat <<EOF > summary.md
-        #### Terraform Format and Style ${{inputs.environment}}🖌\`${{ steps.fmt.outcome }}\`
-        <details><summary>Format Output</summary>
-
-        \`\`\`
-        ${{ steps.fmt.outputs.stdout }}
-        \`\`\`
-
-        </details>
-
+        cat <<'EOF' > summary.md
+        #### Terraform Results ${{ inputs.environment }}
         
-        #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+        #### Terraform Initialization ⚙️${{ steps.init.outcome }} ${{ inputs.environment }}
         <details><summary>Initialization Output</summary>
 
-        \`\`\`
+        ```
         ${{ steps.init.outputs.stdout }}
-        \`\`\`
+        ```
 
         </details>
         
-        #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+        #### Terraform Validation 🤖${{ steps.validate.outcome }} ${{ inputs.environment }}
         <details><summary>Validation Output</summary>
 
-        \`\`\`
+        ```
         ${{ steps.validate.outputs.stdout }}
-        \`\`\`
+        ```
 
         </details>
         
-        #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+        #### Terraform Plan 📖${{ steps.plan.outcome }} ${{ inputs.environment }}
         <details><summary>Show Plan</summary>
 
-        \`\`\`
+        ```
         ${{ steps.plan.outputs.stdout }}
-        \`\`\`
+        ```
 
         </details>
 
@@ -128,7 +118,7 @@ jobs:
     - name: Update Job Summary
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
 
-    - uses: actions/github-script@v6
+    - uses: actions/github-script@v7
       if: github.event_name == 'pull_request'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -142,7 +132,7 @@ jobs:
             issue_number: context.issue.number,
           })
           const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style ${{inputs.environment}}')
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Results ${{ inputs.environment }}')
           })
     
           // 2. Prepare format of the comment
