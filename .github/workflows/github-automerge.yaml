@@ -13,11 +13,10 @@ env:
 # production infrastructure that someone forgot to merge
 
 jobs:
-  apply:
+  merge-pr:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
-      id-token: write # write permission is required for az login
     steps:
     - uses: actions/checkout@v4
     - name: Merge PR

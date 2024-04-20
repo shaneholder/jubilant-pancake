@@ -79,4 +79,4 @@ jobs:
     uses: ./.github/workflows/github-automerge.yaml
     needs: [prod-scenario-apply]
     with:
-      branch: ${{ github.ref_name }}
+      branch: ${{ github.head_ref }}
