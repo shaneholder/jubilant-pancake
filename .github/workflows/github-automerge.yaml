@@ -1,0 +1,28 @@
+run-name: Github Automerge
+name: Github Automerge
+on:
+  workflow_call:
+    inputs:
+      branch:
+        type: string
+        required: true
+env:
+  GH_TOKEN: ${{ github.token }}        
+# Once the PR has been applied to production ensure that the changes
+# are merged into the main branch it would be bad to have changes in
+# production infrastructure that someone forgot to merge
+
+jobs:
+  merge-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # write permission in order to add comments for terraform output
+      contents: write
+      # repository-projects: write      
+    steps:
+    - uses: actions/checkout@v4
+    - name: Merge PR
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        gh pr merge --auto --squash --delete-branch "${{inputs.branch}}"
