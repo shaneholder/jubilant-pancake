@@ -1,0 +1,22 @@
+run-name: Github Automerge
+name: Github Automerge
+on:
+  workflow_call:
+    inputs:
+      branch:
+        type: string
+        required: true
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # write permission in order to add comments for terraform output
+      id-token: write # write permission is required for az login
+    steps:
+    - uses: actions/checkout@v4
+    - name: Merge PR
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        gh pr merge --auto --squash --delete-branch "${{inputs.branch}}"
