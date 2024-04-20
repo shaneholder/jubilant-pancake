@@ -6,6 +6,11 @@ on:
       branch:
         type: string
         required: true
+env:
+  GH_TOKEN: ${{ github.token }}        
+# Once the PR has been applied to production ensure that the changes
+# are merged into the main branch it would be bad to have changes in
+# production infrastructure that someone forgot to merge
 
 jobs:
   apply:
