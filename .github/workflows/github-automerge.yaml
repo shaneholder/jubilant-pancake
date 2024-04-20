@@ -18,7 +18,7 @@ jobs:
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       contents: write
-      repository-projects: write      
+      # repository-projects: write      
     steps:
     - uses: actions/checkout@v4
     - name: Merge PR
