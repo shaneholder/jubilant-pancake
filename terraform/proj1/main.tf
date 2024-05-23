@@ -12,4 +12,3 @@ resource "azurerm_resource_group" "rg-that" {
   location = var.resource_group_location
   name     = format("%s_%s", "fred", var.environment)
 }
-
