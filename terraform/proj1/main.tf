@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 
-resource "azurerm_resource_group" "rg2" {
+resource "azurerm_resource_group" "rg-this" {
   location = var.resource_group_location
   name     = format("%s_%s", "fred", var.environment)
 }
