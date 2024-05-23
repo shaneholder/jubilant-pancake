@@ -6,6 +6,11 @@ on:
       - 'terraform/**'
       - '.github/workflows/*.yaml'
 
+# Prevent multiple parallel jobs as the terraform lock on the plan will fail      
+concurrency:
+  group: terraform
+  cancel-in-progress: false
+
 permissions:
   pull-requests: write # write permission in order to add comments for terraform output
   id-token: write # write permission is required for az login
@@ -39,7 +44,11 @@ jobs:
   #     if: failure()
   #     run: exit 0
 
+  conflict-check:
+    uses: ./.github/workflows/conflict-check.yaml
+
   validation:
+    needs: [conflict-check]
     uses: ./.github/workflows/terraform-validate.yaml
     with:
       working-dir: "terraform/proj1"

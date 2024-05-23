@@ -9,6 +9,6 @@ resource "azurerm_resource_group" "rg" {
 
 
 resource "azurerm_resource_group" "rg2" {
-  location = "northeurope"
+  location = var.resource_group_location
   name     = format("%s_%s", "fred", var.environment)
 }
