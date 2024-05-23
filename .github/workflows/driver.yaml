@@ -44,11 +44,11 @@ jobs:
   #     if: failure()
   #     run: exit 0
 
-  # conflict-check:
-  #   uses: ./.github/workflows/conflict-check.yaml
+   conflict-check:
+     uses: ./.github/workflows/conflict-check.yaml
 
   validation:
-    # needs: [conflict-check]
+    needs: [conflict-check]
     uses: ./.github/workflows/terraform-validate.yaml
     with:
       working-dir: "terraform/proj1"

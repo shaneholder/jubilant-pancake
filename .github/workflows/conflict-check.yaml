@@ -13,5 +13,5 @@ jobs:
 
     - name: conflict-check
       run: |
-        git merge --no-commit --no-ff ${{github.ref}}
+        git merge --no-commit --no-ff ${{github.ref_name}}
         
