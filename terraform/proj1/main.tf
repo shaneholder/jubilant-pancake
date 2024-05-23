@@ -12,3 +12,4 @@ resource "azurerm_resource_group" "rg2" {
   location = "northeurope"
   name     = format("%s_%s", "fred", var.environment)
 }
+
