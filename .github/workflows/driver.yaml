@@ -44,7 +44,7 @@ jobs:
   #     if: failure()
   #     run: exit 0
 
-   conflict-check:
+  conflict-check:
      uses: ./.github/workflows/conflict-check.yaml
 
   validation:
