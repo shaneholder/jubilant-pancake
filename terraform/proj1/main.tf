@@ -7,7 +7,12 @@ resource "azurerm_resource_group" "rg" {
   name     = format("%s_%s", random_pet.rg_name.id, var.environment)
 }
 
-resource "azurerm_resource_group" "rg-that" {
+resource "azurerm_resource_group" "rg-this" {
   location = var.resource_group_location
   name     = format("%s_%s", "fred", var.environment)
+}
+
+resource "azurerm_resource_group" "rg-that" {
+  location = var.resource_group_location
+  name     = format("%s_%s", "fredly", var.environment)
 }
