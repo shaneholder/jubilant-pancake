@@ -15,7 +15,7 @@ A combination of Workflow and GitHub settings needs to be used to achieve the go
 1. [X] Sanitized output of plan must be available for PR review and not in the workflow run log
 1. [X] Plan output must be used for apply
 1. [X] Plan output must be saved securely not as an artifact
-1. [X] Prevent multiple concurrent workflows as the lock on the plan file will cause a failure
+1. [X] Allow multiple developers and prevent multiple concurrent workflows as the lock on the plan file will cause a failure
 
 ## GitHub Settings
 1. [X] Approval Flow, the output of a plan must be approved to apply
