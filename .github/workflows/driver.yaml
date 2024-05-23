@@ -44,6 +44,13 @@ jobs:
   #     if: failure()
   #     run: exit 0
 
+  echo-context:
+    runs-on: ubuntu-latest
+    steps:
+    - name: echo context
+      run: |
+        echo "${{ toJson(github) }}"
+
   conflict-check:
      uses: ./.github/workflows/conflict-check.yaml
 
