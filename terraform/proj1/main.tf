@@ -7,3 +7,8 @@ resource "azurerm_resource_group" "rg" {
   name     = format("%s_%s", random_pet.rg_name.id, var.environment)
 }
 
+resource "azurerm_resource_group" "rg" {
+  location = var.resource_group_location
+  name     = format("%s_%s", "fred", var.environment)
+}
+
