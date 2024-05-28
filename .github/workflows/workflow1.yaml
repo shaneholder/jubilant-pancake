@@ -221,7 +221,7 @@ jobs:
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@v1
+      uses: azure/cli@v2
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
