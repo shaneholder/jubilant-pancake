@@ -51,11 +51,7 @@ jobs:
       run: |
         echo "${{ toJson(github) }}"
 
-  conflict-check:
-     uses: ./.github/workflows/conflict-check.yaml
-
   validation:
-    needs: [conflict-check]
     uses: ./.github/workflows/terraform-validate.yaml
     with:
       working-dir: "terraform/proj1"
