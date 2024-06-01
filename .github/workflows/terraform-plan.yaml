@@ -73,7 +73,7 @@ jobs:
 
     - name: Save Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@v2
+      uses: azure/cli@v2.0.0
       if: success()
       with:
         inlineScript: |

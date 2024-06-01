@@ -81,7 +81,7 @@ jobs:
 
     - name: Save Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@v2
+      uses: azure/cli@v2.0.0
       if: success()
       with:
         inlineScript: |
@@ -221,7 +221,7 @@ jobs:
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
+      uses: azure/cli@674274f56fb4b2d69270c7898d40cfcf005f9065 # v1
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
