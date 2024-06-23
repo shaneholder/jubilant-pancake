@@ -42,15 +42,15 @@ jobs:
       id-token: write # write permission is required for az login
     steps:
     - name: Azure login
-      uses: azure/login@v2
+      uses: azure/login@6c251865b4e6290e7b78be643ea2d005bc51f69a # v2.1.1
       with:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
        
-    - uses: hashicorp/setup-terraform@v3
+    - uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
       with:
         terraform_version: ${{ inputs.terraform-version }}
 
@@ -117,7 +117,7 @@ jobs:
     - name: Update Job Summary
       run: cat summary.md >> $GITHUB_STEP_SUMMARY
 
-    - uses: actions/github-script@v7
+    - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       if: github.event_name == 'pull_request'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}

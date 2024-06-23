@@ -17,9 +17,9 @@ jobs:
   validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
         with:
           terraform_version: ${{ inputs.terraform-version }}
   
@@ -35,3 +35,62 @@ jobs:
         uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
         with:
           github_token: ${{ github.token }}        
+
+      - name: Create Job Summary file
+        if: always()
+        run: |
+          cat <<'EOF' > summary.md
+          #### Terraform Validation Results ${{ inputs.environment }}
+          
+          #### Terraform Validation 🤖${{ steps.validate.outcome }} ${{ inputs.environment }}
+          <details><summary>Validation Output</summary>
+  
+          ```
+          ${{ steps.validate.outputs.stdout }}
+          ```
+  
+          </details>
+            
+          EOF
+    
+      - name: Update Job Summary
+        run: cat summary.md >> $GITHUB_STEP_SUMMARY
+  
+      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const path = require('path')
+            // 1. Retrieve existing bot comments for the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Results ${{ inputs.environment }}')
+            })
+      
+            // 2. Prepare format of the comment
+            const output = fs.readFileSync(path.join(process.env.WORKING_DIR, 'summary.md')).toString()
+  
+            // 3. If we have a comment, update it, otherwise create a new one
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+            }
+              
+        
