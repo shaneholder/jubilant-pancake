@@ -64,7 +64,7 @@ jobs:
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
-      uses: azure/cli@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1.0.9
+      uses: azure/cli@965c8d7571d2231a54e321ddd07f7b10317f34d9# v2.0.0
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
@@ -76,9 +76,9 @@ jobs:
     
     - name: Remove Plan from storage
       if: always()
-      uses: azure/cli@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1.0.9
+      uses: azure/cli@965c8d7571d2231a54e321ddd07f7b10317f34d9# v2.0.0
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob delete --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
+          az storage blob delete --auth-mode login --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
         
