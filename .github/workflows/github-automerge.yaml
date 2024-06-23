@@ -1,5 +1,3 @@
-run-name: Github Automerge
-name: Github Automerge
 on:
   workflow_call:
     inputs:
