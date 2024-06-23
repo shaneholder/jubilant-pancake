@@ -1,3 +1,4 @@
+name: _ workflow call github automerge
 on:
   workflow_call:
     inputs:

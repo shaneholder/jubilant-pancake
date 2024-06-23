@@ -1,3 +1,4 @@
+name: _ workflow call terraform plan
 on:
   workflow_call:
     inputs:

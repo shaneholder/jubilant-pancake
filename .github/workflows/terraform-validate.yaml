@@ -1,3 +1,4 @@
+name: _ workflow call terraform validate
 on:
   workflow_call:
     inputs:
