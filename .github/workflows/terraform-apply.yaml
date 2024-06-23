@@ -75,4 +75,11 @@ jobs:
       id: apply
       run: terraform apply ${{ github.event.number }}.out
     
+    - name: Remove Plan from storage
+      if: always()
+      uses: azure/cli@v2
+      with:
+        inlineScript: |
+          cd ${{ env.WORKING_DIR }}
+          az storage blob delete --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
         

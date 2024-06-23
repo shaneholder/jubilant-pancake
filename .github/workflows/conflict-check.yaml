@@ -1,0 +1,18 @@
+run-name: Conflict Check
+name: Conflict Check
+on:
+  workflow_call:
+
+jobs:
+  conflict-check:
+    runs-on: ubuntu-latest    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: main
+
+    - name: conflict-check
+      run: |
+        # git merge --no-commit --no-ff ${{github.ref_name}}
+        git merge --no-commit --no-ff pr1
+        
