@@ -40,9 +40,9 @@ jobs:
         if: always()
         run: |
           cat <<'EOF' > summary.md
-          #### Terraform Validation Results ${{ inputs.environment }}
+          #### Terraform Validation Results
           
-          #### Terraform Validation 🤖${{ steps.validate.outcome }} ${{ inputs.environment }}
+          #### Terraform Validation 🤖${{ steps.validate.outcome }}
           <details><summary>Validation Output</summary>
   
           ```
@@ -70,7 +70,7 @@ jobs:
               issue_number: context.issue.number,
             })
             const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Results ${{ inputs.environment }}')
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Validation Results')
             })
       
             // 2. Prepare format of the comment
