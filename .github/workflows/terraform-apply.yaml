@@ -1,3 +1,4 @@
+name: _ workflow call terraform apply
 on:
   workflow_call:
     inputs:
