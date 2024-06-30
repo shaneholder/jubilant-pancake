@@ -73,7 +73,27 @@ jobs:
     - name: Terraform Apply
       id: apply
       run: terraform apply ${{ github.event.number }}.out
-    
+
+    - name: Create Job Summary file
+      if: always()
+      run: |
+        cat <<'EOF' > ${{runner.temp}}/summary.md
+        #### Terraform Apply Results
+        
+        #### Terraform Apply 🤖${{ steps.apply.outcome }}
+        <details><summary>Application Output</summary>
+
+        ```
+        ${{ steps.apply.outputs.stdout }}
+        ```
+
+        </details>
+          
+        EOF
+
+    - name: Apply Job Summary
+      run: cat ${{runner.temp}}/summary.md >> $GITHUB_STEP_SUMMARY
+        
     - name: Remove Plan from storage
       if: always()
       uses: azure/cli@965c8d7571d2231a54e321ddd07f7b10317f34d9 # v2.0.0
