@@ -1,6 +1,7 @@
 run-name: Terraform Workflow Driver
 name: Terraform Workflow Driver
-on: 
+on:
+  workflow_dispatch: 
   pull_request:
     paths:
       - 'terraform/**'
@@ -17,39 +18,6 @@ permissions:
   contents: write
       
 jobs:
-  # run1:
-  #   uses: ./.github/workflows/workflow1.yaml
-  #   with:
-  #     working-dir: "terraform/proj1"
-  #     terraform-version: "1.7.3"
-  #     environment: development
-
-  # fail-validation:
-  #   runs-on: ubuntu-latest
-  #   steps:
-
-  #   - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-  #   - name: Check
-  #     run: |
-  #       pwd
-  #       ls ./.github/workflows/
-
-  #   - name: Should Fail
-  #     uses: ./.github/workflows/workflow1.yaml
-  #     with:
-  #       working-dir: "terraform/fail-validation"
-  #       terraform-version: "1.7.3"
-  #       environment: development
-  #   - name: Success if Failed
-  #     if: failure()
-  #     run: exit 0
-
-  echo-context:
-    runs-on: ubuntu-latest
-    steps:
-    - name: echo context
-      run: |
-        echo "${{ toJson(github) }}"
 
   validation:
     uses: ./.github/workflows/terraform-validate.yaml
