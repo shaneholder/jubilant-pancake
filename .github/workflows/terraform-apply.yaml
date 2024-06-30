@@ -60,7 +60,7 @@ jobs:
       # TODO: Minimal permissions required to work, I don't like that the -ro client needs rw access to state storage account
       # Can a different container be used
       id: init
-      run: terraform init -backend-config=backends/${{inputs.environment}}.tfbackend -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
+      run: terraform init -no-color -backend-config=backends/${{inputs.environment}}.tfbackend -backend-config="storage_account_name=${{vars.STORAGE_ACCOUNT_NAME}}" -backend-config="resource_group_name=${{vars.RESOURCE_GROUP_NAME}}"
     
     - name: Download Plan
       # Store the plan so it can be used in the apply
@@ -72,14 +72,23 @@ jobs:
       
     - name: Terraform Apply
       id: apply
-      run: terraform apply ${{ github.event.number }}.out
+      run: terraform apply -no-color ${{ github.event.number }}.out
 
     - name: Create Job Summary file
       if: always()
       run: |
         cat <<'EOF' > ${{runner.temp}}/summary.md
-        #### Terraform Apply Results
-        
+        ### Terraform Apply Results ${{ inputs.environment }}
+
+        #### Terraform Initialization ⚙️${{ steps.init.outcome }} ${{ inputs.environment }}
+        <details><summary>Initialization Output</summary>
+
+        ```
+        ${{ steps.init.outputs.stdout }}
+        ```
+
+        </details>
+       
         #### Terraform Apply 🤖${{ steps.apply.outcome }}
         <details><summary>Application Output</summary>
 

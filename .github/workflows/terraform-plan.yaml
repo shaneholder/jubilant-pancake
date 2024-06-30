@@ -83,7 +83,7 @@ jobs:
       if: always()
       run: |
         cat <<'EOF' > summary.md
-        #### Terraform Results ${{ inputs.environment }}
+        ### Terraform Results ${{ inputs.environment }}
         
         #### Terraform Initialization ⚙️${{ steps.init.outcome }} ${{ inputs.environment }}
         <details><summary>Initialization Output</summary>
