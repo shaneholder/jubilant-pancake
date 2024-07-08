@@ -1,0 +1,31 @@
+run-name: Terraform Workflow Driver
+name: Terraform Workflow Driver
+on:
+  workflow_dispatch: 
+  pull_request_review:
+    types: [submitted]
+    
+# Prevent multiple parallel jobs as the terraform lock on the plan will fail      
+concurrency:
+  group: terraform
+  cancel-in-progress: false
+
+permissions:
+  pull-requests: write # write permission in order to add comments for terraform output
+  id-token: write # write permission is required for az login
+  contents: write
+      
+jobs:
+
+  prod-scenario-apply:
+    uses: ./.github/workflows/terraform-apply.yaml
+    with:
+      working-dir: "terraform/proj1"
+      terraform-version: "1.7.3"
+      environment: production
+
+  auto-merge:
+    uses: ./.github/workflows/github-automerge.yaml
+    needs: [prod-scenario-apply]
+    with:
+      branch: ${{ github.head_ref }}

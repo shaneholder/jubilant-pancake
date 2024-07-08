@@ -6,7 +6,7 @@ on:
     paths:
       - 'terraform/**'
       - '.github/workflows/*.yaml'
-
+    
 # Prevent multiple parallel jobs as the terraform lock on the plan will fail      
 concurrency:
   group: terraform
@@ -46,17 +46,3 @@ jobs:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: production    
-
-  prod-scenario-apply:
-    uses: ./.github/workflows/terraform-apply.yaml
-    needs: [dev-scenario-apply, prod-scenario-plan]
-    with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
-      environment: production
-
-  auto-merge:
-    uses: ./.github/workflows/github-automerge.yaml
-    needs: [prod-scenario-apply]
-    with:
-      branch: ${{ github.head_ref }}
