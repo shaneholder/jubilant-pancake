@@ -1,7 +1,9 @@
 run-name: Terraform Approval Workflow Driver
 name: Terraform Workflow Driver
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+  pull_request:
+    types: [labeled]
   pull_request_review:
     types: [submitted]
     
@@ -18,7 +20,7 @@ permissions:
 jobs:
 
   prod-scenario-apply:
-    if: github.event.review.state == 'APPROVED'
+    if: github.event.review.state == 'APPROVED' || contains(github.event.pull_request.labels.*.name, 'production')
     uses: ./.github/workflows/terraform-apply.yaml
     with:
       working-dir: "terraform/proj1"
