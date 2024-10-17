@@ -12,6 +12,12 @@ on:
       environment:
         type: string
         required: true
+      saveplan:
+        type: boolean
+        required: true
+      planName:
+        type: string
+        required: false
 
 permissions:
   id-token: write # write permission is required for az login
@@ -73,11 +79,11 @@ jobs:
     - name: Save Plan
       # Store the plan so it can be used in the apply
       uses: azure/cli@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
-      if: success()
+      if: success() && inputs.saveplan
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
+          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{inputs.planName}}
 
     - name: Create Job Summary file
       if: always()
