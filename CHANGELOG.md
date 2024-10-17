@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/shaneholder/jubilant-pancake/compare/v1.0.0...v1.0.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* dependancy on plan ([04cf468](https://github.com/shaneholder/jubilant-pancake/commit/04cf468aa829db1fe801925979d0c01057446314))
+* plan delete ([#44](https://github.com/shaneholder/jubilant-pancake/issues/44)) ([04cf468](https://github.com/shaneholder/jubilant-pancake/commit/04cf468aa829db1fe801925979d0c01057446314))
+
 ## [1.0.0](https://github.com/shaneholder/jubilant-pancake/compare/v0.1.0...v1.0.0) (2024-10-17)
 
 
