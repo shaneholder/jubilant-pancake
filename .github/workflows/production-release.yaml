@@ -1,5 +1,5 @@
 run-name: Terraform Production Release
-name: Terraform Workflow Driver
+name: Terraform Production Release
 on:
   workflow_dispatch:
   pull_request:
