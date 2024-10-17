@@ -112,5 +112,5 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob delete --auth-mode login --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
+          az storage blob delete --auth-mode login --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.planName }}
         
