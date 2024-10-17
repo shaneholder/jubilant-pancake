@@ -32,6 +32,8 @@ jobs:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
+      saveplan: true
+      planName: ${{ github.event.number }}_development.out
   dev-scenario-apply:
     uses: ./.github/workflows/terraform-apply.yaml
     needs: [dev-scenario-plan]
@@ -39,10 +41,12 @@ jobs:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
       environment: development
+      planName: ${{ github.event.number }}_development.out
   prod-scenario-plan:
     needs: [validation]
     uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: "terraform/proj1"
       terraform-version: "1.7.3"
-      environment: production    
+      environment: production 
+      saveplan: false  

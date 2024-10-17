@@ -12,6 +12,9 @@ on:
       environment:
         type: string
         required: true
+      planName:
+        type: string
+        required: true
 
 permissions:
   id-token: write # write permission is required for az login
@@ -68,11 +71,11 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob download --auth-mode login -f ${{ github.event.number }}.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ github.event.number }}_${{inputs.environment}}.out
+          az storage blob download --auth-mode login -f plan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.planName }}
       
     - name: Terraform Apply
       id: apply
-      run: terraform apply -no-color ${{ github.event.number }}.out
+      run: terraform apply -no-color plan.out
 
     - name: Create Job Summary file
       if: always()
