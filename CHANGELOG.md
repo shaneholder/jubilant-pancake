@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/shaneholder/jubilant-pancake/compare/v0.1.0...v1.0.0) (2024-10-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* The first guy was an idiot
+
+### Features
+
+* Added a new RG ([#41](https://github.com/shaneholder/jubilant-pancake/issues/41)) ([8dd0505](https://github.com/shaneholder/jubilant-pancake/commit/8dd05053dd9fe2872835efa159f7724992d9cff7))
+
 ## 0.1.0 (2024-10-17)
 
 
