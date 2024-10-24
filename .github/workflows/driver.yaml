@@ -34,8 +34,10 @@ jobs:
           filters: |
             terraform/proj1:
               - 'terraform/proj1/**'
+              - '.github/workflows/*.yaml'
             terraform/proj2:
               - 'terraform/proj2/**'
+              - '.github/workflows/*.yaml'
 
   validation:
     needs: [changes]
