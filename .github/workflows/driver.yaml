@@ -4,7 +4,8 @@ on:
   workflow_dispatch: 
   pull_request:
     paths:
-      - 'terraform/**'
+      - 'terraform/proj1/**'
+      - 'terraform/proj2/**'
       - '.github/workflows/*.yaml'
     
 # Prevent multiple parallel jobs as the terraform lock on the plan will fail      
@@ -19,34 +20,64 @@ permissions:
       
 jobs:
 
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    steps:
+      - name: Paths Filter
+        uses: dorny/paths-filter@3.0.2
+        id: changes
+        with:
+          filters: |
+            terraform/proj1:
+              - 'terraform/proj1/**'
+            terraform/proj2:
+              - 'terraform/proj2/**'
+
   validation:
+    needs: [changes]
     uses: ./.github/workflows/terraform-validate.yaml
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      working-dir: ${{ matrix.workingdir }}
+      terraform-version: "1.9.5"
 
   dev-scenario-plan:
-    needs: [validation]
+    needs: [validation, changes]
     uses: ./.github/workflows/terraform-plan.yaml
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      working-dir: ${{ matrix.workingdir }}
+      terraform-version: "1.9.5"
       environment: development
       saveplan: true
       planName: ${{ github.event.number }}_development.out
   dev-scenario-apply:
     uses: ./.github/workflows/terraform-apply.yaml
-    needs: [dev-scenario-plan]
+    needs: [dev-scenario-plan, changes]
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      working-dir: ${{ matrix.workingdir }}
+      terraform-version: "1.9.5"
       environment: development
       planName: ${{ github.event.number }}_development.out
   prod-scenario-plan:
-    needs: [validation]
+    needs: [validation, changes]
     uses: ./.github/workflows/terraform-plan.yaml
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      working-dir: ${{ matrix.workingdir }}
+      terraform-version: "1.9.5"
       environment: production 
       saveplan: false  
