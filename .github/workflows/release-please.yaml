@@ -3,9 +3,14 @@ on:
     branches:
       - main
 
+concurrency:
+  group: terraform
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
+  id-token: write # write permission is required for az login
 
 name: release-please
 
