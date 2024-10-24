@@ -32,10 +32,10 @@ jobs:
         id: changes
         with:
           filters: |
-            terraform/proj1:
+            proj1:
               - 'terraform/proj1/**'
               - '.github/workflows/*.yaml'
-            terraform/proj2:
+            proj2:
               - 'terraform/proj2/**'
               - '.github/workflows/*.yaml'
 
@@ -49,37 +49,37 @@ jobs:
       working-dir: ${{ matrix.workingdir }}
       terraform-version: "1.9.5"
 
-  dev-scenario-plan:
+  dev-plan:
     needs: [validation, changes]
     uses: ./.github/workflows/terraform-plan.yaml
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: ${{ matrix.workingdir }}
+      working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: development
       saveplan: true
-      planName: ${{ github.event.number }}_${{ matrix.working-dir }}_development.out
-  dev-scenario-apply:
+      planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
+  dev-apply:
     uses: ./.github/workflows/terraform-apply.yaml
-    needs: [dev-scenario-plan, changes]
+    needs: [dev-plan, changes]
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: ${{ matrix.workingdir }}
+      working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: development
-      planName: ${{ github.event.number }}_${{ matrix.working-dir }}_development.out
-  prod-scenario-plan:
+      planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
+  prod-plan:
     needs: [validation, changes]
     uses: ./.github/workflows/terraform-plan.yaml
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
     with:
-      working-dir: ${{ matrix.workingdir }}
+      working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: production 
       saveplan: false  
