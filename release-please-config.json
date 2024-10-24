@@ -1,16 +1,10 @@
 {
   "packages": {
     "terraform/proj1": {
-      "release-type": "terraform-module",
-      "extra-files": [
-        ".github/workflows/*.yaml"
-      ]
+      "release-type": "terraform-module"
     },
     "terraform/proj2": {
-      "release-type": "terraform-module",
-      "extra-files": [
-        ".github/workflows/*.yaml"
-      ]
+      "release-type": "terraform-module"
     }
   }
 }
