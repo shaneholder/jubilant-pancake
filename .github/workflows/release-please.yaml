@@ -20,4 +20,6 @@ jobs:
           manifest-file: .release-please-manifest.json
       - name: Show Release Context
         run: |
-          echo "${{ toJSON (steps.release) }}"
+          echo <<EOF
+            ${{ toJSON (steps.release) }}
+          EOF
