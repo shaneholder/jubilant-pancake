@@ -41,7 +41,7 @@ jobs:
       planName: production.out
 
   prod-apply:
-    needs: [prod-scenario-plan, release-please]
+    needs: [prod-plan, release-please]
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.release.paths_released)}}
