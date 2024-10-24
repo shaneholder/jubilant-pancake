@@ -12,6 +12,8 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.release.outputs }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -23,3 +25,35 @@ jobs:
           echo <<EOF
             ${{ toJSON (steps.release) }}
           EOF
+
+  prod-plan:
+    needs: [release-please]
+    if: needs.release-please.outputs.release.releases_created
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.release-please.outputs.release.paths_released)}}
+    uses: ./.github/workflows/terraform-plan.yaml
+    with:
+      working-dir: ${{matrix.workingdir}}
+      terraform-version: "1.9.5"
+      environment: production 
+      saveplan: true
+      planName: production.out
+
+  prod-apply:
+    needs: [prod-scenario-plan, release-please]
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.release-please.outputs.release.paths_released)}}
+    uses: ./.github/workflows/terraform-apply.yaml
+    with:
+      working-dir: ${{matrix.workingdir}}
+      terraform-version: "1.9.5"
+      environment: production
+      planName: production.out
+
+  # auto-merge:
+  #   uses: ./.github/workflows/github-automerge.yaml
+  #   needs: [prod-scenario-apply]
+  #   with:
+  #     branch: ${{ github.head_ref }}
