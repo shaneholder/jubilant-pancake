@@ -31,4 +31,4 @@ resource "azurerm_resource_group" "rg3" {
   name     = format("%s_%s", random_pet.rg3.id, var.environment)
 }
 
-# relase
+# feature 1
