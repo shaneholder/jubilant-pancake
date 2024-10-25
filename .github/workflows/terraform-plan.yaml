@@ -18,6 +18,10 @@ on:
       planName:
         type: string
         required: false
+    outputs:
+      plan-exitcode:
+        description: "The plan exit code 2 means run apply, 0 means no changes, 1 means error"
+        value: ${{jobs.plan.outputs.plan-exitcode}}
 
 permissions:
   id-token: write # write permission is required for az login
@@ -46,6 +50,8 @@ jobs:
     permissions:
       pull-requests: write # write permission in order to add comments for terraform output
       id-token: write # write permission is required for az login
+    outputs:
+      plan-exitcode: ${{steps.plan.outputs.exitcode}}
     steps:
     - name: Azure login
       uses: azure/login@a65d910e8af852a8061c627c456678983e180302 # v2.2.0
