@@ -35,10 +35,10 @@ jobs:
 
   prod-plan:
     needs: [release-please]
-    if: ${{ needs.release-please.outputs.release.releases_created }}
+    if: ${{ needs.release-please.outputs.releases_created }}
     strategy:
       matrix:
-        workingdir: ${{ fromJSON(needs.release-please.outputs.release.paths_released)}}
+        workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
     uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: ${{matrix.workingdir}}
@@ -51,7 +51,7 @@ jobs:
     needs: [prod-plan, release-please]
     strategy:
       matrix:
-        workingdir: ${{ fromJSON(needs.release-please.outputs.release.paths_released)}}
+        workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
     uses: ./.github/workflows/terraform-apply.yaml
     with:
       working-dir: ${{matrix.workingdir}}
