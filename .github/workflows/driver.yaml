@@ -67,6 +67,7 @@ jobs:
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
+    if: needs.dev-plan.outputs.plan-exitcode == 2
     with:
       working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
