@@ -73,20 +73,20 @@ jobs:
     
     - name: Terraform Plan
       id: plan
-      run: terraform plan -no-color -out=tfplan.out
+      run: terraform plan -detailed-exitcode -no-color -out=tfplan.out
       continue-on-error: true
 
     - name: Save Plan
       # Store the plan so it can be used in the apply
       uses: azure/cli@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
-      if: success() && inputs.saveplan
+      if: success() && inputs.saveplan && steps.plan.outputs.exitcode == 2
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
           az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{inputs.planName}}
 
     - name: Create Job Summary file
-      if: always()
+      if: steps.plan.outputs.exitcode == 2
       run: |
         cat <<'EOF' > summary.md
         ### Terraform Results ${{ inputs.environment }}
@@ -112,10 +112,18 @@ jobs:
         EOF
 
     - name: Update Job Summary
-      run: cat summary.md >> $GITHUB_STEP_SUMMARY
+      run: |
+        if [[ "${{steps.plan.outputs.exitcode}}" == "2" ]]; then
+          cat summary.md >> $GITHUB_STEP_SUMMARY
+        elif [[ "${{steps.plan.outputs.exitcode}}" == "0" ]]; then
+          echo "### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} No Changes" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} ERROR" >> $GITHUB_STEP_SUMMARY
+        fi
+        
 
     - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && steps.plan.outputs.exitcode == 2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
@@ -128,7 +136,7 @@ jobs:
             issue_number: context.issue.number,
           })
           const botComment = comments.find(comment => {
-            return comment.user.type === 'Bot' && comment.body.includes('Terraform Results ${{ inputs.environment }}')
+            return comment.user.type === 'Bot' && comment.body.includes('Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }}')
           })
     
           // 2. Prepare format of the comment
