@@ -1,10 +1,12 @@
 {
   "packages": {
     "terraform/proj1": {
-      "release-type": "terraform-module"
+      "release-type": "terraform-module",
+      "component": "proj1"
     },
     "terraform/proj2": {
-      "release-type": "terraform-module"
+      "release-type": "terraform-module",
+      "component": "proj2"
     }
   }
 }
