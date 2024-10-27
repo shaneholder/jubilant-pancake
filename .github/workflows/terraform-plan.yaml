@@ -92,44 +92,55 @@ jobs:
           az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{inputs.planName}}
 
     - name: Create Job Summary file
-      if: steps.plan.outputs.exitcode == 2
       run: |
-        cat <<'EOF' > summary.md
-        ### Terraform Results ${{ inputs.environment }}
-        
-        #### Terraform Initialization ⚙️${{ steps.init.outcome }} ${{ inputs.environment }}
-        <details><summary>Initialization Output</summary>
+        if [[ "${{steps.plan.outputs.exitcode}}" == "2" ]]; then
+          cat <<'EOF' > summary.md
+          ### Terraform Results  ${{ inputs.working-dir }} ${{ inputs.environment }}
+          
+          #### Terraform Initialization ⚙️${{ steps.init.outcome }} ${{ inputs.environment }}
+          <details><summary>Initialization Output</summary>
 
-        ```
-        ${{ steps.init.outputs.stdout }}
-        ```
+          ```
+          ${{ steps.init.outputs.stdout }}
+          ```
 
-        </details>
-        
-        #### Terraform Plan 📖${{ steps.plan.outcome }} ${{ inputs.environment }}
-        <details><summary>Show Plan</summary>
+          </details>
+          
+          #### Terraform Plan 📖${{ steps.plan.outcome }} ${{ inputs.environment }}
+          <details><summary>Show Plan</summary>
 
-        ```
-        ${{ steps.plan.outputs.stdout }}
-        ```
+          ```
+          ${{ steps.plan.outputs.stdout }}
+          ```
 
-        </details>
+          </details>
 
-        EOF
+          EOF
+        elif [[ "${{steps.plan.outputs.exitcode}}" == "0" ]]; then
+          cat <<'EOF' > summary.md
+          ### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} No Changes
+          EOF
+        else
+          cat <<'EOF' > summary.md
+          ### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} ERROR
+
+          #### Terraform Plan 📖${{ steps.plan.outcome }} ${{ inputs.environment }}
+          <details><summary>ERROR</summary>
+
+          ```
+          ${{ steps.plan.outputs.stderr }}
+          ```
+          EOF
+        fi
+
 
     - name: Update Job Summary
       run: |
-        if [[ "${{steps.plan.outputs.exitcode}}" == "2" ]]; then
-          cat summary.md >> $GITHUB_STEP_SUMMARY
-        elif [[ "${{steps.plan.outputs.exitcode}}" == "0" ]]; then
-          echo "### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} No Changes" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} ERROR" >> $GITHUB_STEP_SUMMARY
-        fi
+        cat summary.md >> $GITHUB_STEP_SUMMARY
         
 
     - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      if: github.event_name == 'pull_request' && steps.plan.outputs.exitcode == 2
+      if: github.event_name == 'pull_request'
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
