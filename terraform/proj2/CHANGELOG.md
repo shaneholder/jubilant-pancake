@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/shaneholder/jubilant-pancake/compare/proj2-v0.6.0...proj2-v0.7.0) (2024-10-27)
+
+
+### Features
+
+* feature 2 ([#74](https://github.com/shaneholder/jubilant-pancake/issues/74)) ([d839755](https://github.com/shaneholder/jubilant-pancake/commit/d839755fecd0504a5418680902a00942df45420e))
+
 ## [0.6.0](https://github.com/shaneholder/jubilant-pancake/compare/proj2-v0.5.0...proj2-v0.6.0) (2024-10-27)
 
 
