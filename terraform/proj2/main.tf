@@ -8,3 +8,4 @@ resource "azurerm_resource_group" "rg" {
 }
 
 # release
+# feature 1
