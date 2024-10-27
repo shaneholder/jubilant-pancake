@@ -115,11 +115,11 @@ jobs:
 
           </details>
 
-          EOF
+        EOF
         elif [[ "${{steps.plan.outputs.exitcode}}" == "0" ]]; then
           cat <<'EOF' > summary.md
           ### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} No Changes
-          EOF
+        EOF
         else
           cat <<'EOF' > summary.md
           ### Terraform Results ${{ inputs.working-dir }} ${{ inputs.environment }} ERROR
@@ -130,7 +130,7 @@ jobs:
           ```
           ${{ steps.plan.outputs.stderr }}
           ```
-          EOF
+        EOF
         fi
 
 
