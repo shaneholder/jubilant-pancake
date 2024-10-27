@@ -53,6 +53,7 @@ jobs:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
     uses: ./.github/workflows/terraform-apply.yaml
+    if: needs.prod-plan.outputs.plan-exitcode == 2
     with:
       working-dir: ${{matrix.workingdir}}
       terraform-version: "1.9.5"
