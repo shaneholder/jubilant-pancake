@@ -35,8 +35,7 @@ jobs:
 
   prod-plan:
     needs: [release-please]
-    # if: ${{ needs.release-please.outputs.releases_created }}
-    if: false
+    if: ${{ needs.release-please.outputs.releases_created }} == "true"
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
