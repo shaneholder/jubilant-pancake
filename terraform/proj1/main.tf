@@ -34,3 +34,4 @@ resource "azurerm_resource_group" "rg3" {
 # feature 1
 # feature 2
 # chore 1
+# feature 3
