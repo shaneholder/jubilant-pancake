@@ -1,17 +1,14 @@
 {
   "packages": {
-    ".": {
-      "release-type": "simple",
-      "component": "root",
-      "skip-github-release": true
-    },
     "terraform/proj1": {
       "release-type": "terraform-module",
-      "component": "proj1"
+      "component": "proj1",
+      "changelog-path": "/CHANGELOG.md"
     },
     "terraform/proj2": {
       "release-type": "terraform-module",
-      "component": "proj2"
+      "component": "proj2",
+      "changelog-path": "/CHANGELOG.md"
     }
   }
 }
