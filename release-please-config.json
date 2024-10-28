@@ -2,7 +2,8 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "component": "root"
+      "component": "root",
+      "skip-github-release": true
     },
     "terraform/proj1": {
       "release-type": "terraform-module",
