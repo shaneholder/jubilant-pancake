@@ -1,5 +1,8 @@
 {
   "packages": {
+    ".": {
+      "component": "root"
+    },
     "terraform/proj1": {
       "release-type": "terraform-module",
       "component": "proj1"
