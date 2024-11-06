@@ -21,7 +21,7 @@ permissions:
 jobs:
 
   changes:
-    uses: ./.github/actions/changes
+    uses: ./.github/workflows/changes.yaml
 
   validation:
     needs: [changes]
