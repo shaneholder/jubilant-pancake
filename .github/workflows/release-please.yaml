@@ -34,29 +34,7 @@ jobs:
           EOF
 
   changes:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      changes: ${{ steps.changes.outputs.changes }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Paths Filter
-        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 #v3.0.2
-        id: changes
-        with:
-          filters: |
-            proj1:
-              - 'terraform/proj1/**'
-              - '.github/workflows/*.yaml'
-            proj2:
-              - 'terraform/proj2/**'
-              - '.github/workflows/*.yaml'
-      - name: Show Release Context
-        run: |
-          echo <<EOF
-            ${{ toJSON (steps.changes) }}
-          EOF
+    uses: ./.github/workflows/changes.yaml
 
   prod-plan:
     needs: [changes]
