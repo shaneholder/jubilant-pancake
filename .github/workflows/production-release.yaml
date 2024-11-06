@@ -3,9 +3,7 @@ name: Terraform Production Release
 on:
   workflow_dispatch:
   pull_request:
-    types: [labeled]
-  pull_request_review:
-    types: [submitted]
+    types: [closed]
     
 # Prevent multiple parallel jobs as the terraform lock on the plan will fail      
 concurrency:
@@ -18,9 +16,17 @@ permissions:
   contents: write
       
 jobs:
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show Release Context
+        run: |
+          echo <<EOF
+            ${{ toJSON (github) }}
+          EOF
 
   prod-scenario-plan:
-    if: github.event.review.state == 'APPROVED' || contains(github.event.pull_request.labels.*.name, 'production')
+    if: github.event.pull_request.merged == true || contains(github.event.pull_request.labels.*.name, 'production')
     uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: "terraform/proj1"
@@ -31,7 +37,7 @@ jobs:
 
   prod-scenario-apply:
     needs: [prod-scenario-plan]
-    if: github.event.review.state == 'APPROVED' || contains(github.event.pull_request.labels.*.name, 'production')
+    if: github.event.pull_request.merged == true || contains(github.event.pull_request.labels.*.name, 'production')
     uses: ./.github/workflows/terraform-apply.yaml
     with:
       working-dir: "terraform/proj1"
