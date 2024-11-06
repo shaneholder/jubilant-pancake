@@ -15,10 +15,6 @@ permissions:
 name: release-please
 
 jobs:
-  checkout:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
   release-please:
     runs-on: ubuntu-latest
@@ -40,16 +36,22 @@ jobs:
 
   changes:
     needs: [release-please]
-    uses: ./.github/actions/changes
-    with:
-      ref: "release-please--branches--main"
+    runs-on: ubuntu-latest
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      - uses: ./.github/actions/changes
+        id: changes
+        with:
+          ref: "release-please--branches--main"
 
   prod-plan:
     needs: [changes]
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes)}}
-    uses: ./.github/actions/terraform-plan.yaml
+    uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: terraform/${{matrix.workingdir}}
       terraform-version: "1.9.5"
@@ -63,7 +65,7 @@ jobs:
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
-    uses: ./.github/actions/terraform-plan.yaml
+    uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: ${{matrix.workingdir}}
       terraform-version: "1.9.5"
@@ -76,7 +78,7 @@ jobs:
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
-    uses: ./.github/actions/terraform-apply.yaml
+    uses: ./.github/workflows/terraform-apply.yaml
     if: needs.prod-plan-release.outputs.plan-exitcode == 2
     with:
       working-dir: ${{matrix.workingdir}}

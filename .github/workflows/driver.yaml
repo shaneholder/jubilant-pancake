@@ -25,7 +25,7 @@ jobs:
 
   validation:
     needs: [changes]
-    uses: ./.github/actions/terraform-validate.yaml
+    uses: ./.github/workflows/terraform-validate.yaml
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
@@ -35,7 +35,7 @@ jobs:
 
   dev-plan:
     needs: [validation, changes]
-    uses: ./.github/actions/terraform-plan.yaml
+    uses: ./.github/workflows/terraform-plan.yaml
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
@@ -46,7 +46,7 @@ jobs:
       saveplan: true
       planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
   dev-apply:
-    uses: ./.github/actions/terraform-apply.yaml
+    uses: ./.github/workflows/terraform-apply.yaml
     needs: [dev-plan, changes]
     strategy:
       matrix:
@@ -59,7 +59,7 @@ jobs:
       planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
   prod-plan:
     needs: [validation, changes]
-    uses: ./.github/actions/terraform-plan.yaml
+    uses: ./.github/workflows/terraform-plan.yaml
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes) }} 
