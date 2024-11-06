@@ -34,7 +34,10 @@ jobs:
           EOF
 
   changes:
+    needs: [release-please]
     uses: ./.github/workflows/changes.yaml
+    with:
+      ref: "release-please--branches--main"
 
   prod-plan:
     needs: [changes]
