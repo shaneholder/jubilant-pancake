@@ -35,7 +35,7 @@ jobs:
 
   changes:
     needs: [release-please]
-    uses: ./.github/actions/changes.yaml
+    uses: ./.github/actions/changes
     with:
       ref: "release-please--branches--main"
 
