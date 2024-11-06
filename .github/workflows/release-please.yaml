@@ -36,7 +36,7 @@ jobs:
 
   changes:
     needs: [release-please]
-    if: needs.release-please.outputs.prs_created
+    if: needs.release-please.outputs.prs_created == 'true'
     uses: ./.github/workflows/changes.yaml
     with:
       ref: "release-please--branches--main"
