@@ -1,6 +1,10 @@
 name: _ detect changes
 on:
   workflow_call:
+    outputs:
+      changes: 
+        description: "changes detected"
+        value: ${{ jobs.changes.outputs.changes }}
 
 permissions:
   contents: read
