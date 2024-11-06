@@ -39,3 +39,4 @@ resource "azurerm_resource_group" "rg3" {
 # feature 5
 # feature 6
 # feature 7
+# new feature
