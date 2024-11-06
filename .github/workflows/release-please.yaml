@@ -57,8 +57,21 @@ jobs:
           echo <<EOF
             ${{ toJSON (steps.changes) }}
           EOF
-                        
+
   prod-plan:
+    needs: [changes]
+    strategy:
+      matrix:
+        workingdir: ${{ fromJSON(needs.changes.outputs.changes)}}
+    uses: ./.github/workflows/terraform-plan.yaml
+    with:
+      working-dir: ${{matrix.workingdir}}
+      terraform-version: "1.9.5"
+      environment: production 
+      saveplan: false
+      planName: production.out
+                  
+  prod-plan-release:
     needs: [release-please]
     if: needs.release-please.outputs.releases_created == 'true'
     strategy:
@@ -73,12 +86,12 @@ jobs:
       planName: production.out
 
   prod-apply:
-    needs: [prod-plan, release-please]
+    needs: [prod-plan-release, release-please]
     strategy:
       matrix:
         workingdir: ${{ fromJSON(needs.release-please.outputs.paths_released)}}
     uses: ./.github/workflows/terraform-apply.yaml
-    if: needs.prod-plan.outputs.plan-exitcode == 2
+    if: needs.prod-plan-release.outputs.plan-exitcode == 2
     with:
       working-dir: ${{matrix.workingdir}}
       terraform-version: "1.9.5"
