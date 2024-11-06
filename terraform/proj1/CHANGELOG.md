@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.8.0](https://github.com/shaneholder/jubilant-pancake/compare/proj1-v2.7.0...proj1-v2.8.0) (2024-11-06)
+
+
+### Features
+
+* feature 10 ([#90](https://github.com/shaneholder/jubilant-pancake/issues/90)) ([6eb76c0](https://github.com/shaneholder/jubilant-pancake/commit/6eb76c00db55d441e9160bec03ef23f0af42d911))
+* feature 4 ([#76](https://github.com/shaneholder/jubilant-pancake/issues/76)) ([f9aae51](https://github.com/shaneholder/jubilant-pancake/commit/f9aae519436a11665f69b8d9d958733acfd6da48))
+* Feature 7 ([#87](https://github.com/shaneholder/jubilant-pancake/issues/87)) ([a8dd30b](https://github.com/shaneholder/jubilant-pancake/commit/a8dd30b4b982a202a4368a1946eeb27844f82461))
+* feature 8 ([#88](https://github.com/shaneholder/jubilant-pancake/issues/88)) ([ebc3eee](https://github.com/shaneholder/jubilant-pancake/commit/ebc3eee4fc79ad98b0dade911cd9feb8cf6233a1))
+* feature 9 ([#89](https://github.com/shaneholder/jubilant-pancake/issues/89)) ([c1b0746](https://github.com/shaneholder/jubilant-pancake/commit/c1b07460346ae9f7d9ba9df1a4571bab1078eff9))
+* **proj1:** Feature 5 ([#78](https://github.com/shaneholder/jubilant-pancake/issues/78)) ([62de213](https://github.com/shaneholder/jubilant-pancake/commit/62de213f35fd0a4f80e3c55a68e6eea4e36e7cbd))
+* **proj1:** Feature 6 ([#81](https://github.com/shaneholder/jubilant-pancake/issues/81)) ([7358eaa](https://github.com/shaneholder/jubilant-pancake/commit/7358eaafa819799524b52b758dd725e06ce2fe32))
+
 ## [2.4.0](https://github.com/shaneholder/jubilant-pancake/compare/proj1-v2.3.0...proj1-v2.4.0) (2024-10-28)
 
 
