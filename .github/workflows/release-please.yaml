@@ -65,7 +65,7 @@ jobs:
         workingdir: ${{ fromJSON(needs.changes.outputs.changes)}}
     uses: ./.github/workflows/terraform-plan.yaml
     with:
-      working-dir: ${{matrix.workingdir}}
+      working-dir: terraform/${{matrix.workingdir}}
       terraform-version: "1.9.5"
       environment: production 
       saveplan: false
