@@ -52,7 +52,6 @@ jobs:
       terraform-version: "1.9.5"
       environment: production 
       saveplan: false
-      planName: production.out
                   
   # prod-plan-release:
   #   needs: [release-please]

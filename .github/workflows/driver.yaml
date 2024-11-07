@@ -44,7 +44,7 @@ jobs:
       terraform-version: "1.9.5"
       environment: development
       saveplan: true
-      planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
+      
   dev-apply:
     uses: ./.github/workflows/terraform-apply.yaml
     needs: [dev-plan, changes]
@@ -56,7 +56,8 @@ jobs:
       working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: development
-      planName: ${{ github.event.number }}_${{ matrix.workingdir }}_development.out
+      planName: ${{ needs.dev-plan.outputs.plan-name }}
+
   prod-plan:
     needs: [validation, changes]
     uses: ./.github/workflows/terraform-plan.yaml

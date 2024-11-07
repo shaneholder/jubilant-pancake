@@ -30,20 +30,19 @@ jobs:
     uses: ./.github/workflows/terraform-plan.yaml
     with:
       working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      terraform-version: "1.9.5"
       environment: production 
       saveplan: true
-      planName: production.out
 
   prod-scenario-apply:
     needs: [prod-scenario-plan]
-    if: github.event.pull_request.merged == true || contains(github.event.pull_request.labels.*.name, 'production')
+    if: needs.prod-scenario-plan.outputs.plan-exitcode == '2' && (github.event.pull_request.merged == true || contains(github.event.pull_request.labels.*.name, 'production'))
     uses: ./.github/workflows/terraform-apply.yaml
     with:
       working-dir: "terraform/proj1"
-      terraform-version: "1.7.3"
+      terraform-version: "1.9.5"
       environment: production
-      planName: production.out
+      planName: ${{ needs.prod-scenario-plan.outputs.plan-name }}
 
   auto-merge:
     uses: ./.github/workflows/github-automerge.yaml

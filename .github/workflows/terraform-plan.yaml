@@ -15,13 +15,13 @@ on:
       saveplan:
         type: boolean
         required: true
-      planName:
-        type: string
-        required: false
     outputs:
       plan-exitcode:
         description: "The plan exit code 2 means run apply, 0 means no changes, 1 means error"
-        value: ${{jobs.plan.outputs.plan-exitcode}}
+        value: ${{ jobs.plan.outputs.plan-exitcode }}
+      plan-name:
+        description: "The name of the plan file generated and saved when saveplan is true"
+        value: ${{ jobs.plan.outputs.plan-name }}
 
 permissions:
   id-token: write # write permission is required for az login
@@ -52,6 +52,7 @@ jobs:
       id-token: write # write permission is required for az login
     outputs:
       plan-exitcode: ${{steps.plan.outputs.exitcode}}
+      plan-name: ${{steps.plan.outputs.exitcode}}
     steps:
     - name: Azure login
       uses: azure/login@a65d910e8af852a8061c627c456678983e180302 # v2.2.0
@@ -89,7 +90,9 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{inputs.planName}}
+          planname=${{ github.run_id }}.plan
+          echo "planname=$planname" >> $GITHUB_OUTPUT
+          az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name $planname
 
     - name: Create Job Summary file
       run: |
