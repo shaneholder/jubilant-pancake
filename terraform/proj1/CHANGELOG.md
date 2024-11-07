@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.11.0](https://github.com/shaneholder/jubilant-pancake/compare/proj1-v2.10.0...proj1-v2.11.0) (2024-11-07)
+
+
+### Features
+
+* Feature 13 ([#95](https://github.com/shaneholder/jubilant-pancake/issues/95)) ([27b968a](https://github.com/shaneholder/jubilant-pancake/commit/27b968a663f60037914ee6ca02e4abef3fc73f8a))
+* Feature 14 ([#97](https://github.com/shaneholder/jubilant-pancake/issues/97)) ([5d284b5](https://github.com/shaneholder/jubilant-pancake/commit/5d284b5a81d401f4fa066df7d1d9bfda3ef10b6d))
+
 ## [2.10.0](https://github.com/shaneholder/jubilant-pancake/compare/proj1-v2.9.0...proj1-v2.10.0) (2024-11-06)
 
 
