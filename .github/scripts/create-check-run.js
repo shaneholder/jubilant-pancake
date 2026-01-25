@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = async ({ github, context, planOutputFile, exitCode }) => {
-  console.log(`context: ${ JSON.stringify(github)}`);
+  console.log(`github: ${ JSON.stringify(github)}`);
   console.log(`context: ${ JSON.stringify(context)}`);
   // Read plan output from file
   const planOutput = fs.readFileSync(planOutputFile, 'utf8');
@@ -134,7 +134,7 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     name: 'Terraform Plan',
-    head_sha: github.sha,
+    head_sha: context.payload.pull_request.head.sha,
     status: 'completed',
     conclusion: conclusion,
     output: {
