@@ -25,6 +25,8 @@ on:
 
 permissions:
   id-token: write # write permission is required for az login
+  checks: write   # Permission to create a Check Run
+  contents: write # Permission to write a repository_dispatch requests
 
 jobs:
 
