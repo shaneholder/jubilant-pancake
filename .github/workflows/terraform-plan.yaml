@@ -22,6 +22,9 @@ on:
       plan-name:
         description: "The name of the plan file generated and saved when saveplan is true"
         value: ${{ jobs.plan.outputs.plan-name }}
+    secrets:
+      GH_Status_checking_private_key:
+        required: true
 
 permissions:
   id-token: write # write permission is required for az login
