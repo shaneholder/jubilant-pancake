@@ -150,7 +150,7 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
     ] : []
   });
 
-  console.log(`Check Run created: ${checkRun.data}`);
+  console.log(`Check Run created: ${ JSON.stringify(checkRun.data)}`);
   
   // Also post as PR comment for visibility
   const prNumber = context.payload.pull_request?.number;
