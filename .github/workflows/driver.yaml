@@ -43,7 +43,7 @@ jobs:
       working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: development
-      saveplan: true
+      save-plan: false
       apply-plan: true  
     secrets:
       GH_Status_checking_private_key: ${{ secrets.GH_Status_checking_private_key }}
@@ -59,6 +59,6 @@ jobs:
       working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: production 
-      saveplan: false 
+      save-plan: false 
     secrets:
       GH_Status_checking_private_key: ${{ secrets.GH_Status_checking_private_key }}

@@ -12,10 +12,11 @@ on:
       environment:
         type: string
         required: true
-      saveplan:
+      save-plan:
         type: boolean
         required: true
       apply-plan:
+        description: "If true the plan will be applied automatically"
         type: boolean
         required: false
         default: false
@@ -24,7 +25,7 @@ on:
         description: "The plan exit code 2 means run apply, 0 means no changes, 1 means error"
         value: ${{ jobs.plan.outputs.plan-exitcode }}
       plan-name:
-        description: "The name of the plan file generated and saved when saveplan is true"
+        description: "The name of the plan file generated and saved when save-plan is true"
         value: ${{ jobs.plan.outputs.plan-name }}
     secrets:
       GH_Status_checking_private_key:
@@ -109,7 +110,7 @@ jobs:
     - name: Save Plan
       # Store the plan so it can be used in the apply
       uses: azure/cli@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
-      if: success() && inputs.saveplan && steps.plan.outputs.exitcode == 2 && !inputs.apply-plan 
+      if: success() && inputs.save-plan && steps.plan.outputs.exitcode == 2 && !inputs.apply-plan 
       id: save-plan
       with:
         inlineScript: |
