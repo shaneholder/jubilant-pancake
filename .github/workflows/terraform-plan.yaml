@@ -105,7 +105,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          planname=${{ github.run_id }}.plan
+          planname=${{ inputs.working-dir }}-${{ inputs.environment }}-${{ github.run_id }}.plan
           echo "plan-name=$planname" >> $GITHUB_OUTPUT
           az storage blob upload --overwrite --auth-mode login -f  tfplan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name $planname
 
