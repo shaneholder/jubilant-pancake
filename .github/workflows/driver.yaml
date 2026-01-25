@@ -58,7 +58,7 @@ jobs:
       working-dir: "terraform/${{ matrix.workingdir }}"
       terraform-version: "1.9.5"
       environment: development
-      planName: ${{ needs.dev-plan.outputs.plan-name }}
+      plan-name: ${{ needs.dev-plan.outputs.plan-name }}
 
   prod-plan:
     needs: [validation, changes]
