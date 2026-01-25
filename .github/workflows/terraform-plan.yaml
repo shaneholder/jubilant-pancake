@@ -207,7 +207,7 @@ jobs:
           const path = require('path');
           const script = require('./.github/scripts/terraform-create-check-run.js');
           const planOutputFile = path.join(process.env.GITHUB_WORKSPACE, '${{ inputs.working-dir }}', 'plan-output.txt');
-          const checkId = '${{ inputs.working-dir }}';
+          const checkId = '${{ inputs.working-dir }}-${{ inputs.environment }}-plan';
           const exitCode = parseInt('${{ steps.plan.outputs.exitcode }}');
           await script({ github, context, checkId, planOutputFile, exitCode });
 
