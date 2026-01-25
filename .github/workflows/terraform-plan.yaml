@@ -61,6 +61,10 @@ jobs:
       with:
         app-id: ${{ secrets.APP_ID }}
         private-key: ${{ secrets.GH_Status_checking_private_key }}
+        owner: ${{ github.repository_owner }}
+        repositories: |
+         - ${{ github.event.repository.name }}
+         
     - name: Azure login
       uses: azure/login@a65d910e8af852a8061c627c456678983e180302 # v2.2.0
       with:
