@@ -207,8 +207,9 @@ jobs:
           const path = require('path');
           const script = require('./.github/scripts/create-check-run.js');
           const planOutputFile = path.join(process.env.GITHUB_WORKSPACE, '${{ inputs.working-dir }}', 'plan-output.txt');
+          const checkId = '${{ inputs.working-dir }}';
           const exitCode = parseInt('${{ steps.plan.outputs.exitcode }}');
-          await script({ github, context, planOutputFile, exitCode });
+          await script({ github, context, checkId, planOutputFile, exitCode });
 
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'

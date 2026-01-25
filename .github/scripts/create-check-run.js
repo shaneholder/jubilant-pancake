@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-module.exports = async ({ github, context, planOutputFile, exitCode }) => {
+module.exports = async ({ github, context, checkId, planOutputFile, exitCode }) => {
   console.log(`github: ${ JSON.stringify(github)}`);
   console.log(`context: ${ JSON.stringify(context)}`);
   // Read plan output from file
@@ -133,7 +133,7 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
   const checkRun = await github.rest.checks.create({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    name: 'Terraform Plan',
+    name: `Terraform Plan ${checkId}`,
     head_sha: context.payload.pull_request.head.sha,
     status: 'completed',
     conclusion: conclusion,
@@ -157,7 +157,7 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
   // Also post as PR comment for visibility
   const prNumber = context.payload.pull_request?.number;
   if (prNumber) {
-    const commentBody = `## 🏗️ Terraform Plan Results\n\n${summary}\n<details>\n<summary>Full Plan Output</summary>\n\n\`\`\`hcl\n${planOutput.substring(0, 60000)}\n\`\`\`\n</details>`;
+    const commentBody = `## 🏗️ Terraform Plan Results ${checkId}\n\n${summary}\n<details>\n<summary>Full Plan Output</summary>\n\n\`\`\`hcl\n${planOutput.substring(0, 60000)}\n\`\`\`\n</details>`;
     
     // Find existing comment to update
     const comments = await github.rest.issues.listComments({
