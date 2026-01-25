@@ -179,14 +179,21 @@ jobs:
             })
           }
 
+    - name: Write Plan Output to File
+      run: |
+        cat <<'EOF' > plan-output.txt
+        ${{ steps.plan.outputs.stdout }}
+        EOF
+
     - name: Create Check Run
       uses: actions/github-script@v8
       with:
         script: |
+          const path = require('path');
           const script = require('./.github/scripts/create-check-run.js');
-          const planOutput = '${{steps.plan.outputs.stdout}}';
-          const exitCode = parseInt('${{ steps.plan.outputs.exit_code }}');
-          await script({ github, context, planOutput, exitCode });
+          const planOutputFile = path.join(process.env.GITHUB_WORKSPACE, '${{ inputs.working-dir }}', 'plan-output.txt');
+          const exitCode = parseInt('${{ steps.plan.outputs.exitcode }}');
+          await script({ github, context, planOutputFile, exitCode });
 
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'

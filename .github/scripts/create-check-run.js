@@ -1,6 +1,9 @@
 const fs = require('fs');
 
-module.exports = async ({ github, context, planOutput, exitCode }) => {
+module.exports = async ({ github, context, planOutputFile, exitCode }) => {
+  // Read plan output from file
+  const planOutput = fs.readFileSync(planOutputFile, 'utf8');
+
   // Parse the plan output
   const addMatch = planOutput.match(/(\d+) to add/);
   const changeMatch = planOutput.match(/(\d+) to change/);
