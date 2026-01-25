@@ -56,6 +56,12 @@ jobs:
       plan-exitcode: ${{steps.plan.outputs.exitcode}}
       plan-name: ${{steps.plan.outputs.exitcode}}
     steps:
+    - name: Auth to github as application
+      id: generate-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.GH_Status_checking_private_key }}
     - name: Azure login
       uses: azure/login@a65d910e8af852a8061c627c456678983e180302 # v2.2.0
       with:
@@ -190,6 +196,7 @@ jobs:
     - name: Create Check Run
       uses: actions/github-script@v8
       with:
+        github-token: ${{ steps.generate-token.outputs.token }}
         script: |
           const path = require('path');
           const script = require('./.github/scripts/create-check-run.js');
