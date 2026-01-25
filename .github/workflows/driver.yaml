@@ -71,3 +71,5 @@ jobs:
       terraform-version: "1.9.5"
       environment: production 
       saveplan: false  
+    secrets:
+      GH_Status_checking_private_key: ${{ secrets.GH_Status_checking_private_key }}
