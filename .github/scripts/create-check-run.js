@@ -1,6 +1,8 @@
 const fs = require('fs');
 
 module.exports = async ({ github, context, planOutputFile, exitCode }) => {
+  console.log(`context: ${ JSON.stringify(github)}`);
+  console.log(`context: ${ JSON.stringify(context)}`);
   // Read plan output from file
   const planOutput = fs.readFileSync(planOutputFile, 'utf8');
 
