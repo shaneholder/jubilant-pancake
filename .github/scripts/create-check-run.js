@@ -124,9 +124,11 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
       }
     }
   }
+
+  console.log(`Creating check run with conclusion: ${conclusion}`);
   
   // Create the check run
-  await github.rest.checks.create({
+  const checkRun = await github.rest.checks.create({
     owner: context.repo.owner,
     repo: context.repo.repo,
     name: 'Terraform Plan',
@@ -147,6 +149,8 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
       }
     ] : []
   });
+
+  console.log(`Check Run created: ${checkRun.data}`);
   
   // Also post as PR comment for visibility
   const prNumber = context.payload.pull_request?.number;
