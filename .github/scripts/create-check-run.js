@@ -132,7 +132,7 @@ module.exports = async ({ github, context, planOutputFile, exitCode }) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     name: 'Terraform Plan',
-    head_sha: context.sha,
+    head_sha: github.sha,
     status: 'completed',
     conclusion: conclusion,
     output: {
