@@ -12,7 +12,7 @@ on:
       environment:
         type: string
         required: true
-      planName:
+      plan-name:
         type: string
         required: true
 
@@ -71,7 +71,7 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob download --auth-mode login -f plan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.planName }}
+          az storage blob download --auth-mode login -f plan.out --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.plan-name }}
       
     - name: Terraform Apply
       id: apply
@@ -112,5 +112,5 @@ jobs:
       with:
         inlineScript: |
           cd ${{ env.WORKING_DIR }}
-          az storage blob delete --auth-mode login --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.planName }}
+          az storage blob delete --auth-mode login --account-name ${{ vars.STORAGE_ACCOUNT_NAME }} --container-name plans --name ${{ inputs.plan-name }}
         
