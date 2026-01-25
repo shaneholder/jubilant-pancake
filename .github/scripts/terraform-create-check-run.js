@@ -149,7 +149,13 @@ module.exports = async ({ github, context, checkId, planOutputFile, exitCode }) 
         description: 'Acknowledge destruction of resources',
         identifier: 'approve_destroy'
       }
-    ] : []
+    ] : [
+      {
+        label: 'Apply Plan',
+        description: 'Apply the Terraform plan changes',
+        identifier: 'approve_plan'
+      }
+    ]
   });
 
   console.log(`Check Run created: ${ JSON.stringify(checkRun.data)}`);
