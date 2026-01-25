@@ -153,37 +153,4 @@ module.exports = async ({ github, context, checkId, planOutputFile, exitCode }) 
   });
 
   console.log(`Check Run created: ${ JSON.stringify(checkRun.data)}`);
-  
-  // Also post as PR comment for visibility
-  const prNumber = context.payload.pull_request?.number;
-  if (prNumber) {
-    const commentBody = `## 🏗️ Terraform Plan Results ${checkId}\n\n${summary}\n<details>\n<summary>Full Plan Output</summary>\n\n\`\`\`hcl\n${planOutput.substring(0, 60000)}\n\`\`\`\n</details>`;
-    
-    // Find existing comment to update
-    const comments = await github.rest.issues.listComments({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      issue_number: prNumber
-    });
-    
-    const botComment = comments.data.find(c => 
-      c.user.type === 'Bot' && c.body.includes('Terraform Plan Results')
-    );
-    
-    if (botComment) {
-      await github.rest.issues.updateComment({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        comment_id: botComment.id,
-        body: commentBody
-      });
-    } else {
-      await github.rest.issues.createComment({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        issue_number: prNumber,
-        body: commentBody
-      });
-    }
-  }
 };
